@@ -3,27 +3,19 @@ import unicodedata
 from fractions import Fraction
 
 
-def normalizar_ecuacion(equation: str) -> str:
+def normalizar_ecuacion(ecuacion: str) -> str:
     # Normaliza los caracteres de acuerdo a la normalizacion NFKC de unicode
-    equation = unicodedata.normalize("NFKC", equation)
+    ecuacion = unicodedata.normalize("NFKC", ecuacion)
 
     # Caracteres especiales a normalizar
-    replacements = {
-        "−": "-",
-        "×": "*",
-        "÷": "/",
-        "⁺": "+",
-        "⁻": "-",
-        "∙": "*",
-        "⋅": "*",
-    }
-    equation = re.sub(r"[\u200B\u200C\u200D\u2060]", "", equation)
+    reemplazos = {"−": "-", "×": "*", "÷": "/", "⁺": "+", "⁻": "-", "∙": "*", "⋅": "*"}
+    ecuacion = re.sub(r"[\u200B\u200C\u200D\u2060]", "", ecuacion)
 
-    for old, new in replacements.items():
+    for old, new in reemplazos.items():
         # se reemplazan caracteres especiales (si los hay) por caracteres normalizados
-        equation = equation.replace(old, new)
+        ecuacion = ecuacion.replace(old, new)
 
-    return equation.strip()
+    return ecuacion.strip()
 
 
 def convertir_ecuacion(ecuacion, variables):
