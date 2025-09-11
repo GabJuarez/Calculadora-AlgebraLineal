@@ -51,7 +51,7 @@ def crear_matriz():
             print("Debe ingresar un numero entero")
 
     while True:
-        variables = input("Ingrese las incógnitas (ej: x y z): ").split()
+        variables = input("Ingrese las incógnitas (ej: x1 x2 x3): ").split()
         if len(variables) != n_incog:
             print(f"Debe ingresar exactamente {n_incog} variables")
             continue
@@ -60,9 +60,19 @@ def crear_matriz():
             continue
         break
 
+    while True:
+        try:
+            n_ecuaciones = int(input("Ingrese el número de ecuaciones: "))
+            if n_ecuaciones <= 0:
+                print("El número debe ser mayor a 0")
+                continue
+            break
+        except ValueError:
+            print("Debe ingresar un número entero")
+
     matriz = []
     print("Ingrese cada ecuación:")
-    for i in range(n_incog):
+    for i in range(n_ecuaciones):
         while True:
             ecuacion = input(f"Ecuación {i+1}: ")
             try:
@@ -71,7 +81,6 @@ def crear_matriz():
             except Exception as e:
                 print(f"Error en la ecuación: {e}")
     return matriz, variables
-
 
 def imprimir_matriz(matriz):
     for fila in matriz:
