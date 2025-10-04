@@ -1,6 +1,7 @@
 import re
 import unicodedata
 from fractions import Fraction
+import ast
 
 
 def normalizar_ecuacion(ecuacion: str) -> str:
@@ -12,54 +13,174 @@ def normalizar_ecuacion(ecuacion: str) -> str:
     return ecuacion.strip()
 
 
+def agregar_multiplicacion_implicita(ecuacion, variables):
+    # Inserta * entre número y variable (ej: 0.8x -> 0.8*x)
+    for var in variables:
+        ecuacion = re.sub(rf'(?<![\w])([\d\.]+)({var})(?![\w])', r'\1*\2', ecuacion)
+    return ecuacion
+
+
 def convertir_ecuacion(ecuacion, variables):
     ecuacion = ecuacion.replace(" ", "")
     ecuacion = normalizar_ecuacion(ecuacion)
+    ecuacion = agregar_multiplicacion_implicita(ecuacion, variables)
     partes = ecuacion.split("=")
     if len(partes) != 2:
         raise ValueError("La ecuación debe contener un único '='.")
 
-    term_independiente = Fraction(partes[1])
-    coeficientes = [Fraction(0)] * len(variables)
-
-    patron = re.compile(r"([+-]?\d*)([a-zA-Z]+)")
-    for num in patron.finditer(partes[0]):
-        coeficiente, variable = num.groups()
-        if coeficiente in ("", "+"):
-            coeficiente = Fraction(1)
-        elif coeficiente == "-":
-            coeficiente = Fraction(-1)
+    # Parse left side (variables and coefficients)
+    expr_izq = partes[0]
+    tree = ast.parse(expr_izq, mode='eval')
+    def recolectar(node):
+        if isinstance(node, ast.BinOp):
+            if isinstance(node.op, ast.Add):
+                left = recolectar(node.left)
+                right = recolectar(node.right)
+                return [l + r for l, r in zip(left[0], right[0])], left[1] + right[1]
+            elif isinstance(node.op, ast.Sub):
+                left = recolectar(node.left)
+                right = recolectar(node.right)
+                return [l - r for l, r in zip(left[0], right[0])], left[1] - right[1]
+            elif isinstance(node.op, ast.Mult):
+                left = recolectar(node.left)
+                right = recolectar(node.right)
+                if all(x == 0 for x in left[0]):
+                    # left is constant
+                    return [right[0][i] * left[1] for i in range(len(variables))], right[1] * left[1]
+                elif all(x == 0 for x in right[0]):
+                    # right is constant
+                    return [left[0][i] * right[1] for i in range(len(variables))], left[1] * right[1]
+                else:
+                    raise ValueError("Multiplicación de variables no soportada")
+            elif isinstance(node.op, ast.Div):
+                left = recolectar(node.left)
+                right = recolectar(node.right)
+                if all(x == 0 for x in right[0]):
+                    # right is constant
+                    return [left[0][i] / right[1] for i in range(len(variables))], left[1] / right[1]
+                else:
+                    raise ValueError("División de variables entre variables no soportada")
+            else:
+                raise ValueError("Operación no soportada")
+        elif isinstance(node, ast.Num):
+            return [Fraction(0)] * len(variables), Fraction(str(node.n))
+        elif isinstance(node, ast.Constant):
+            return [Fraction(0)] * len(variables), Fraction(str(node.value))
+        elif isinstance(node, ast.Name):
+            if node.id in variables:
+                idx = variables.index(node.id)
+                return [Fraction(1) if i == idx else Fraction(0) for i in range(len(variables))], Fraction(0)
+            else:
+                raise ValueError(f"Variable '{node.id}' no reconocida")
+        elif isinstance(node, ast.UnaryOp):
+            coef, const = recolectar(node.operand)
+            if isinstance(node.op, ast.USub):
+                return [-c for c in coef], -const
+            elif isinstance(node.op, ast.UAdd):
+                return coef, const
+            else:
+                raise ValueError("Operador unario no soportado")
         else:
-            coeficiente = Fraction(coeficiente)
+            raise ValueError("Expresión no soportada")
+    coeficientes, term_indep_izq = recolectar(tree.body)
 
-        if variable not in variables:
-            raise ValueError(f"La variable '{variable}' no está en la lista declarada.")
-        coeficientes[variables.index(variable)] = coeficiente
+    # Parse right side (término independiente, puede ser expresión)
+    expr_der = partes[1]
+    tree_der = ast.parse(expr_der, mode='eval')
+    def recolectar_right(node):
+        if isinstance(node, ast.BinOp):
+            left = recolectar_right(node.left)
+            right = recolectar_right(node.right)
+            if isinstance(node.op, ast.Add):
+                return left + right
+            elif isinstance(node.op, ast.Sub):
+                return left - right
+            elif isinstance(node.op, ast.Mult):
+                return left * right
+            elif isinstance(node.op, ast.Div):
+                return left / right
+            else:
+                raise ValueError("Operación no soportada")
+        elif isinstance(node, ast.Num):
+            return Fraction(str(node.n))
+        elif isinstance(node, ast.Constant):
+            return Fraction(str(node.value))
+        elif isinstance(node, ast.UnaryOp):
+            val = recolectar_right(node.operand)
+            if isinstance(node.op, ast.USub):
+                return -val
+            elif isinstance(node.op, ast.UAdd):
+                return val
+            else:
+                raise ValueError("Operador unario no soportado")
+        elif isinstance(node, ast.Name):
+            if node.id in variables:
+                idx = variables.index(node.id)
+                return Fraction(1) if idx == 0 else Fraction(0)
+            else:
+                raise ValueError(f"Variable '{node.id}' no reconocida en el lado derecho")
+        else:
+            raise ValueError("Expresión no soportada")
 
-    return coeficientes + [term_independiente]
+    def recolectar_right(node):
+        if isinstance(node, ast.BinOp):
+            if isinstance(node.op, ast.Add):
+                left = recolectar_right(node.left)
+                right = recolectar_right(node.right)
+                return [l + r for l, r in zip(left[0], right[0])], left[1] + right[1]
+            elif isinstance(node.op, ast.Sub):
+                left = recolectar_right(node.left)
+                right = recolectar_right(node.right)
+                return [l - r for l, r in zip(left[0], right[0])], left[1] - right[1]
+            elif isinstance(node.op, ast.Mult):
+                left = recolectar_right(node.left)
+                right = recolectar_right(node.right)
+                if all(x == 0 for x in left[0]):
+                    return [right[0][i] * left[1] for i in range(len(variables))], right[1] * left[1]
+                elif all(x == 0 for x in right[0]):
+                    return [left[0][i] * right[1] for i in range(len(variables))], left[1] * right[1]
+                else:
+                    raise ValueError("Multiplicación de variables no soportada")
+            elif isinstance(node.op, ast.Div):
+                left = recolectar_right(node.left)
+                right = recolectar_right(node.right)
+                if all(x == 0 for x in right[0]):
+                    return [left[0][i] / right[1] for i in range(len(variables))], left[1] / right[1]
+                else:
+                    raise ValueError("División de variables entre variables no soportada")
+            else:
+                raise ValueError("Operación no soportada")
+        elif isinstance(node, ast.Num):
+            return [Fraction(0)] * len(variables), Fraction(str(node.n))
+        elif isinstance(node, ast.Constant):
+            return [Fraction(0)] * len(variables), Fraction(str(node.value))
+        elif isinstance(node, ast.Name):
+            if node.id in variables:
+                idx = variables.index(node.id)
+                return [Fraction(1) if i == idx else Fraction(0) for i in range(len(variables))], Fraction(0)
+            else:
+                raise ValueError(f"Variable '{node.id}' no reconocida en el lado derecho")
+        elif isinstance(node, ast.UnaryOp):
+            coef, const = recolectar_right(node.operand)
+            if isinstance(node.op, ast.USub):
+                return [-c for c in coef], -const
+            elif isinstance(node.op, ast.UAdd):
+                return coef, const
+            else:
+                raise ValueError("Operador unario no soportado")
+        else:
+            raise ValueError("Expresión no soportada")
+    coef_der, term_indep_der = recolectar_right(tree_der.body)
+
+    # Mueve todos los términos al lado izquierdo
+    coef_final = [a - b for a, b in zip(coeficientes, coef_der)]
+    term_indep = term_indep_der - term_indep_izq
+    return coef_final + [term_indep]
 
 
 def crear_matriz():
-    while True:
-        try:
-            n_incog = int(input("Ingrese el número de incógnitas: "))
-            if n_incog <= 0:
-                print("El número debe ser mayor a 0")
-                continue
-            break
-        except ValueError:
-            print("Debe ingresar un numero entero")
-
-    while True:
-        variables = input("Ingrese las incógnitas (ej: x y z): ").split()
-        if len(variables) != n_incog:
-            print(f"Debe ingresar exactamente {n_incog} variables")
-            continue
-        if len(set(variables)) != n_incog:
-            print("Las variables no deben repetirse")
-            continue
-        break
-
+    n_incog = int(input("Ingrese el número de incógnitas: "))
+    variables = input("Ingrese las incógnitas (ej: x y z): ").split()
     matriz = []
     print("Ingrese cada ecuación:")
     for i in range(n_incog):

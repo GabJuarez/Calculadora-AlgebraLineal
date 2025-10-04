@@ -1,6 +1,7 @@
 import re
 import unicodedata
 from fractions import Fraction
+import ast
 
 
 def normalizar_ecuacion(ecuacion: str) -> str:
@@ -18,42 +19,105 @@ def normalizar_ecuacion(ecuacion: str) -> str:
     return ecuacion.strip()
 
 
+def evaluar_lado(expr, variables):
+    tree = ast.parse(expr, mode='eval')
+    coef = {v: Fraction(0) for v in variables}
+    const = Fraction(0)
+
+    class Visitor(ast.NodeVisitor):
+        def visit_BinOp(self, node):
+            left_coef, left_const = self.visit(node.left)
+            right_coef, right_const = self.visit(node.right)
+            if isinstance(node.op, ast.Add):
+                return (
+                    {v: left_coef[v] + right_coef[v] for v in variables},
+                    left_const + right_const
+                )
+            elif isinstance(node.op, ast.Sub):
+                return (
+                    {v: left_coef[v] - right_coef[v] for v in variables},
+                    left_const - right_const
+                )
+            elif isinstance(node.op, ast.Mult):
+                if all(v == 0 for v in right_coef.values()):
+                    # right is constant
+                    return (
+                        {v: left_coef[v] * right_const for v in variables},
+                        left_const * right_const
+                    )
+                elif all(v == 0 for v in left_coef.values()):
+                    # left is constant
+                    return (
+                        {v: right_coef[v] * left_const for v in variables},
+                        right_const * left_const
+                    )
+                else:
+                    raise ValueError("Multiplicación de variables no soportada")
+            elif isinstance(node.op, ast.Div):
+                if all(v == 0 for v in right_coef.values()):
+                    # right is constant
+                    return (
+                        {v: left_coef[v] / right_const for v in variables},
+                        left_const / right_const
+                    )
+                else:
+                    raise ValueError("División de variables entre variables no soportada")
+            else:
+                raise ValueError("Operación no soportada")
+
+        def visit_Num(self, node):
+            return ({v: Fraction(0) for v in variables}, Fraction(node.n))
+
+        def visit_Constant(self, node):
+            return ({v: Fraction(0) for v in variables}, Fraction(node.value))
+
+        def visit_Name(self, node):
+            if node.id in variables:
+                return ({v: Fraction(1) if v == node.id else Fraction(0) for v in variables}, Fraction(0))
+            else:
+                raise ValueError(f"Variable '{node.id}' no reconocida")
+
+        def visit_UnaryOp(self, node):
+            coef, const = self.visit(node.operand)
+            if isinstance(node.op, ast.USub):
+                return ({v: -coef[v] for v in variables}, -const)
+            elif isinstance(node.op, ast.UAdd):
+                return (coef, const)
+            else:
+                raise ValueError("Operador unario no soportado")
+
+        def generic_visit(self, node):
+            raise ValueError("Expresión no soportada")
+
+    visitor = Visitor()
+    coef, const = visitor.visit(tree.body)
+    return coef, const
+
+
+def agregar_multiplicacion_implicita(ecuacion, variables):
+    # Inserta * entre número y variable (ej: 30x -> 30*x)
+    for var in variables:
+        # Busca patrones como 30x, -5y, 2.5z, etc.
+        ecuacion = re.sub(rf'(?<![\w])([\d\.]+)({var})(?![\w])', r'\1*\2', ecuacion)
+    return ecuacion
+
+
 def convertir_ecuacion(ecuacion, variables):
-    ecuacion = ecuacion.replace(" ", "")  #
+    ecuacion = ecuacion.replace(" ", "")
     ecuacion = normalizar_ecuacion(ecuacion)
-    ecuacion_separada = ecuacion.split(
-        "="
-    )  # Para asi separar del termino independiente y las variables
+    ecuacion = agregar_multiplicacion_implicita(ecuacion, variables)
+    partes = ecuacion.split("=")
+    if len(partes) != 2:
+        raise ValueError("La ecuación debe contener un único signo '='.")
 
-    if len(ecuacion_separada) != 2:
-        raise ValueError("La ecuacion debe contener un único signo '='.")
+    coef_izq, const_izq = evaluar_lado(partes[0], variables)
+    coef_der, const_der = evaluar_lado(partes[1], variables)
 
-    term_independiente = Fraction(ecuacion_separada[1])
-    coeficientes = [Fraction(0)] * len(variables)
+    # Mueve todos los términos al lado izquierdo
+    coef_final = [coef_izq[v] - coef_der[v] for v in variables]
+    term_indep = const_der - const_izq
 
-    patron = re.compile(r"([+-]?[\d]*)([a-zA-Z]+)")
-
-    # se itera por cada termino que corresponda con el patron el cual es: coeficiente + variable
-    for num in patron.finditer(ecuacion_separada[0]):
-        coeficiente, variable = num.groups()
-        if coeficiente == "" or coeficiente == "+":
-            coeficiente = Fraction(1)
-        elif coeficiente == "-":
-            coeficiente = Fraction(-1)
-        else:
-            coeficiente = Fraction(coeficiente)
-
-        if variable not in variables:
-            raise ValueError(
-                f"La variable '{variable}' no fue declarada en la lista de variables."
-            )
-
-        index_var = variables.index(variable)
-        coeficientes[index_var] = coeficiente
-
-    return coeficientes + [
-        term_independiente
-    ]  # se devuelve la fila de coeficientes con el termino independiente
+    return coef_final + [term_indep]
 
 
 def crear_matriz():
