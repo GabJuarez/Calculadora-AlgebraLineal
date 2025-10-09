@@ -52,6 +52,12 @@ def construir_matriz(vectores, n, m):
         fila.append(Fraction(0))
     return matriz
 
+def es_trivial(soluciones):
+    for solucion in soluciones:
+        if solucion.numerator != 0:
+            return False
+    return True
+
 def main():
     print("Verificador de independencia lineal de vectores")
     vectores, n, m = pedir_vectores()
@@ -70,7 +76,8 @@ def main():
     matriz_gj, pivotes = gauss_jordan(matriz)
     tipo, soluciones, libres = analizar_solucion(matriz_gj, [f"c{i+1}" for i in range(n)], pivotes)
     print("\nResultado:")
-    if tipo == "única":
+    print(soluciones)
+    if tipo == "única" and es_trivial(soluciones):
         print("Los vectores son linealmente independientes (solo la solucion trivial)")
     else:
         print("Los vectores son linealmente dependientes (existen soluciones no triviales)")
