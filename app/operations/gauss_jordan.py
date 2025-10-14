@@ -169,9 +169,10 @@ def crear_matriz(n_incog, variables, ecuaciones):
 
 
 def imprimir_matriz(matriz):
+    from fractions import Fraction
     lines = []
     for fila in matriz:
-        line = "| " + "  ".join(f"{val!s:>5}" for val in fila[:-1]) + " || " + f"{fila[-1]!s:>5} |"
+        line = "| " + "  ".join(f"{Fraction(val).limit_denominator()!s:>8}" for val in fila[:-1]) + " || " + f"{Fraction(fila[-1]).limit_denominator()!s:>8} |"
         lines.append(line)
     return "\n".join(lines)
 
@@ -180,6 +181,10 @@ def gauss_jordan(matriz, tolerancia=1e-12):
     n, m = len(matriz), len(matriz[0]) - 1
     fila = 0
     pivotes = []
+    procedimiento = []
+    from .gauss_jordan import imprimir_matriz
+    procedimiento.append("\n--- Proceso Gauss-Jordan ---\nMatriz inicial:")
+    procedimiento.append(imprimir_matriz(matriz))
 
     for col in range(m):
         # Buscar pivote en esta columna
@@ -193,24 +198,34 @@ def gauss_jordan(matriz, tolerancia=1e-12):
 
         # Intercambiar filas si es necesario
         if pivote != fila:
+            procedimiento.append(f"Operacion: F{fila+1} ↔ F{pivote+1}")
             matriz[fila], matriz[pivote] = matriz[pivote], matriz[fila]
+            procedimiento.append(imprimir_matriz(matriz))
 
         # Normalizar fila pivote
         piv_val = matriz[fila][col]
+        if piv_val != 1:
+            procedimiento.append(f"Operacion: F{fila+1} → (1/{piv_val})·F{fila+1}")
         matriz[fila] = [x / piv_val for x in matriz[fila]]
+        procedimiento.append(imprimir_matriz(matriz))
 
         # Eliminar en otras filas
         for i in range(n):
             if i != fila and abs(matriz[i][col]) > tolerancia:
                 factor = matriz[i][col]
+                if factor != 0:
+                    procedimiento.append(f"Operacion: F{i+1} → F{i+1} - ({factor})·F{fila+1}")
                 matriz[i] = [a - factor * b for a, b in zip(matriz[i], matriz[fila])]
+                procedimiento.append(imprimir_matriz(matriz))
 
         pivotes.append(col)
         fila += 1
         if fila == n:
             break
 
-    return matriz, pivotes
+    procedimiento.append("\nMatriz final tras Gauss-Jordan:")
+    procedimiento.append(imprimir_matriz(matriz))
+    return matriz, pivotes, procedimiento
 
 
 def analizar_solucion(matriz, variables, pivotes, tolerancia=1e-12):
@@ -234,6 +249,7 @@ def analizar_solucion(matriz, variables, pivotes, tolerancia=1e-12):
 
 
 def imprimir_resultados(tipo, soluciones, variables, libres, pivotes):
+    from fractions import Fraction
     result = []
     result.append("Columnas pivote: " + ", ".join([variables[c] for c in pivotes]))
 
@@ -242,7 +258,7 @@ def imprimir_resultados(tipo, soluciones, variables, libres, pivotes):
     elif tipo == "única":
         result.append("➡ El sistema tiene solucion unica:")
         for var, val in zip(variables, soluciones):
-            result.append(f"   {var} = {val}")
+            result.append(f"   {var} = {Fraction(val).limit_denominator()}")
     else:
         result.append("➡ El sistema tiene infinitas soluciones:")
         if libres:
