@@ -4,11 +4,11 @@ from PyQt6.QtWidgets import QDialog, QVBoxLayout, QPushButton, QTextEdit, QMessa
 
 
 class GaussJordanWindow(QDialog):
-    def __init__(self, filas=3, columnas=4, padre=None):
+    def __init__(self, padre=None):
         super().__init__(padre)
         self.setWindowTitle("Gauss-Jordan")
         self.layout = QVBoxLayout(self)
-        self.entrada_matriz = EntradaMatrizWidget(filas, columnas)
+        self.entrada_matriz = EntradaMatrizWidget()
         self.layout.addWidget(self.entrada_matriz)
         self.boton_resolver = QPushButton("Resolver")
         self.boton_resolver.clicked.connect(self.resolver)
