@@ -1,21 +1,38 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QPushButton
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QPushButton, QSpinBox
 
 
 class EntradaMatrizWidget(QWidget):
-    def __init__(self, filas=3, columnas=3, padre=None):
+    def __init__(self, padre=None):
         super().__init__(padre)
-        self.filas = filas
-        self.columnas = columnas
+        #creando el layout para poder aniadir los widgets a la ventana
         self.disenio = QVBoxLayout(self)
-        self.etiqueta = QLabel(f"Ingrese los valores de una matriz {filas}x{columnas}:")
+
+        #creando los spinbox para seleccionar el numero de filas y
+        # columnas que corresponden al tamanio de la matriz
+        self.spinbox_filas = QSpinBox(self, minimum=1, maximum=10, value=3)
+        self.spinbox_columnas = QSpinBox(self, minimum=1, maximum=10, value =3)
+        self.disenio.addWidget(QLabel("Número de filas:"))
+        self.disenio.addWidget(self.spinbox_filas)
+        self.disenio.addWidget(QLabel("Número de columnas:"))
+        self.disenio.addWidget(self.spinbox_columnas)
+        self.spinbox_columnas.valueChanged.connect(lambda _: self.actualizar_tabla())
+        self.spinbox_filas.valueChanged.connect(lambda _: self.actualizar_tabla())
+        self.filas = self.spinbox_filas.value()
+        self.columnas = self.spinbox_columnas.value()
+
+        # creando la tabla para ingresar los valores de la matriz
+        self.etiqueta = QLabel(f"Ingrese los valores de una matriz {self.filas}x{self.columnas}:")
         self.disenio.addWidget(self.etiqueta)
-        self.tabla = QTableWidget(filas, columnas)
+        self.tabla = QTableWidget(self.filas, self.columnas)
         self.disenio.addWidget(self.tabla)
         self.setLayout(self.disenio)
+
+        # creando el boton para limpiar la matriz
         self.boton_limpiar = QPushButton("Limpiar")
         self.boton_limpiar.clicked.connect(self.limpiar_matriz)
         self.disenio.addWidget(self.boton_limpiar)
 
+    # falta validar el tipo de valores ingresados
     def obtener_matriz(self):
         matriz = []
         for i in range(self.filas):
@@ -38,3 +55,12 @@ class EntradaMatrizWidget(QWidget):
 
     def limpiar_matriz(self):
         self.tabla.clearContents()
+        for i in range(self.filas):
+            for j in range(self.columnas):
+                self.tabla.setItem(i, j, QTableWidgetItem(""))
+
+    def actualizar_tabla(self):
+        self.filas = self.spinbox_filas.value()
+        self.columnas = self.spinbox_columnas.value()
+        self.tabla.setColumnCount(self.columnas)
+        self.tabla.setRowCount(self.filas)
