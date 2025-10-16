@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QPushButton, QSpinBox
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QPushButton, QSpinBox, \
+    QMessageBox
 
 
 class EntradaMatrizWidget(QWidget):
@@ -24,6 +25,9 @@ class EntradaMatrizWidget(QWidget):
         self.etiqueta = QLabel(f"Ingrese los valores de una matriz {self.filas}x{self.columnas}:")
         self.disenio.addWidget(self.etiqueta)
         self.tabla = QTableWidget(self.filas, self.columnas)
+        # ocultando los encabezados de la tabla
+        self.tabla.verticalHeader().setVisible(False)
+        self.tabla.horizontalHeader().setVisible(False)
         self.disenio.addWidget(self.tabla)
         self.setLayout(self.disenio)
 
@@ -32,7 +36,7 @@ class EntradaMatrizWidget(QWidget):
         self.boton_limpiar.clicked.connect(self.limpiar_matriz)
         self.disenio.addWidget(self.boton_limpiar)
 
-    # falta validar el tipo de valores ingresados
+
     def obtener_matriz(self):
         matriz = []
         for i in range(self.filas):
@@ -43,7 +47,8 @@ class EntradaMatrizWidget(QWidget):
                 try:
                     fila.append(float(valor))
                 except ValueError:
-                    fila.append(0.0)
+                    QMessageBox.critical(self, "Error", f"Valor inválido en la posición ({i+1}, {j+1}): '{valor}' ")
+                    return []
             matriz.append(fila)
         return matriz
 
@@ -64,3 +69,4 @@ class EntradaMatrizWidget(QWidget):
         self.columnas = self.spinbox_columnas.value()
         self.tabla.setColumnCount(self.columnas)
         self.tabla.setRowCount(self.filas)
+        self.etiqueta.setText(f"Ingrese los valores de una matriz {self.filas}x{self.columnas}:")
