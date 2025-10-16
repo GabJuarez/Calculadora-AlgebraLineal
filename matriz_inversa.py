@@ -6,6 +6,7 @@ def leer_tamanio():
         if re.match(r"^\d+x\d+$", entrada): # Aqui hay una validacion que indica que si la entrada es igual al patron que le indicamos abajo entonces se ejecutara lo siguiente
             # Los terminos ^ y $ aseguran que no hayan terminos repetidos y /d representan digitos
             n, m = map(int, entrada.lower().split('x')) # Aqui indicamos que n y m van a valer los valores partidos a partir de x
+            # El metodo map(int) indica que se van a convertir dos pares a enteros
             if n == m: # Validacion que indica que la matriz debe ser cuadrada de lo contrario pues mandamos un mensaje
                 return n
             else:
@@ -16,21 +17,20 @@ def leer_tamanio():
 
 def crear_matriz_directa(n):
     matriz = []
-    for i in range(n):
+    for i in range(n): # Ciclo for para recorrer el tamanio de la matriz
         while True:
             fila = input(f"Ingrese la fila {i + 1} (separe los números con espacios): ")
-            numeros = fila.strip().split()
+            numeros = fila.strip().split() # Eliminamos espacios al inicio
             if len(numeros) != n:
-                print(f"Debe ingresar exactamente {n} números.")
+                print(f"Debe ingresar exactamente {n} números.") # Esto valida que la cantidad de valores sea n
                 continue
             try:
-                fila_numeros = [float(x) for x in numeros]
+                fila_numeros = [float(x) for x in numeros] # Aqui convertirmos la entrada a flotantes para tener mayor precision
                 matriz.append(fila_numeros)
                 break
             except ValueError:
                 print("Ingrese solo números válidos.")
     return matriz
-
 
 def mostrar_matriz(m):
     for fila in m:
@@ -40,32 +40,35 @@ def mostrar_matriz(m):
 
 def matriz_identidad(n):
     return [[1 if i == j else 0 for j in range(n)] for i in range(n)]
-
+    ## Aqui para cada fila i crea una lista con 1 en la posicion j y cuando i es igual a j pone 0
 
 def gauss_jordan_pasos(A):
     n = len(A)
     I = matriz_identidad(n)
     aumentada = [A[i] + I[i] for i in range(n)]
+    # Para cada fila i concatenamos la fila A[i] con la fila I[i] formando la matriz aumentada
 
     print("Matriz aumentada inicial [A | I]:")
     mostrar_matriz(aumentada)
 
+    # Bucle principal por columna/fila pivote:
     for i in range(n):
         pivote = aumentada[i][i]
         if pivote == 0:
-            for k in range(i + 1, n):
+            for k in range(i + 1, n): # Se busca una fila tal que aumentada[k][i] != 0 y si se encuentra se intercambian filas
                 if aumentada[k][i] != 0:
                     aumentada[i], aumentada[k] = aumentada[k], aumentada[i]
                     pivote = aumentada[i][i]
                     print(f"Intercambiamos fila {i + 1} con fila {k + 1} por pivote cero")
                     mostrar_matriz(aumentada)
                     break
-            else:
+            else: # Si no se encuentra la fila k entonces la matriz no es invertible
                 raise ValueError("La matriz no tiene inversa.")
 
         aumentada[i] = [x / pivote for x in aumentada[i]]
         print(f"Dividimos la fila {i + 1} por el pivote {pivote}")
         mostrar_matriz(aumentada)
+        # Aqui se divide la fila [i] entre el pivote dejando 1 en la posicion diagonal
 
         for j in range(n):
             if j != i:
@@ -76,6 +79,7 @@ def gauss_jordan_pasos(A):
 
     inversa = [fila[n:] for fila in aumentada]
     return inversa
+
 
 
 def main():
