@@ -17,9 +17,13 @@ class GaussJordanWindow(QDialog):
         self.resultado_texto.setReadOnly(True)
         self.layout.addWidget(self.resultado_texto)
         self.setLayout(self.layout)
+        self.setStyleSheet("background-color: white;")
 
     def resolver(self):
         matriz = self.entrada_matriz.obtener_matriz()
+        if len(matriz) == 0:
+            QMessageBox.critical(None, "Error", "Hubo un error al obtener los valores de la matriz")
+            return
         try:
             n_vars = len(matriz[0]) - 1
             variables = [f"x{i+1}" for i in range(n_vars)]
