@@ -3,9 +3,10 @@ import re
 def leer_tamanio():
     while True:
         entrada = input("Ingrese el tamaño de la matriz (ej. 3x3): ")
-        if re.match(r"^\d+x\d+$", entrada):
-            n, m = map(int, entrada.lower().split('x'))
-            if n == m:
+        if re.match(r"^\d+x\d+$", entrada): # Aqui hay una validacion que indica que si la entrada es igual al patron que le indicamos abajo entonces se ejecutara lo siguiente
+            # Los terminos ^ y $ aseguran que no hayan terminos repetidos y /d representan digitos
+            n, m = map(int, entrada.lower().split('x')) # Aqui indicamos que n y m van a valer los valores partidos a partir de x
+            if n == m: # Validacion que indica que la matriz debe ser cuadrada de lo contrario pues mandamos un mensaje
                 return n
             else:
                 print("La matriz debe ser cuadrada. Intente nuevamente.")
