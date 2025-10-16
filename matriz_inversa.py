@@ -1,6 +1,5 @@
 import re
 
-
 def leer_tamanio():
     while True:
         entrada = input("Ingrese el tamaño de la matriz (ej. 3x3): ")
@@ -14,37 +13,22 @@ def leer_tamanio():
             print("Formato incorrecto. Ejemplo válido: 3x3")
 
 
-def ecuacion_a_lista(ecuacion, variables):
-    ecuacion = ecuacion.replace(" ", "")
-    izquierda, derecha = ecuacion.split("=")
-    coeficientes = []
-    for var in variables:
-        match = re.search(r"([+-]?\d*\.?\d*)" + var, izquierda)
-        if match:
-            coef = match.group(1)
-            if coef == "" or coef == "+":
-                coef = 1
-            elif coef == "-":
-                coef = -1
-            else:
-                coef = float(coef)
-        else:
-            coef = 0
-        coeficientes.append(coef)
-    termino = float(derecha)
-    return coeficientes, termino
-
-
-def crear_matriz_por_ecuaciones(n):
-    variables = [chr(ord('x') + i) for i in range(n)]
-    A = []
-    b = []
+def crear_matriz_directa(n):
+    matriz = []
     for i in range(n):
-        ecuacion = input(f"Ingrese la ecuación {i + 1} (ej. 3x + 2y - z = 4): ")
-        fila, termino = ecuacion_a_lista(ecuacion, variables)
-        A.append(fila)
-        b.append([termino])
-    return A, b
+        while True:
+            fila = input(f"Ingrese la fila {i + 1} (separe los números con espacios): ")
+            numeros = fila.strip().split()
+            if len(numeros) != n:
+                print(f"Debe ingresar exactamente {n} números.")
+                continue
+            try:
+                fila_numeros = [float(x) for x in numeros]
+                matriz.append(fila_numeros)
+                break
+            except ValueError:
+                print("Ingrese solo números válidos.")
+    return matriz
 
 
 def mostrar_matriz(m):
@@ -58,9 +42,6 @@ def matriz_identidad(n):
 
 
 def gauss_jordan_pasos(A):
-    """
-    Calcula la inversa mostrando paso a paso usando [A | I]
-    """
     n = len(A)
     I = matriz_identidad(n)
     aumentada = [A[i] + I[i] for i in range(n)]
@@ -69,7 +50,6 @@ def gauss_jordan_pasos(A):
     mostrar_matriz(aumentada)
 
     for i in range(n):
-        # Pivote
         pivote = aumentada[i][i]
         if pivote == 0:
             for k in range(i + 1, n):
@@ -82,12 +62,10 @@ def gauss_jordan_pasos(A):
             else:
                 raise ValueError("La matriz no tiene inversa.")
 
-        # Dividir fila por pivote
         aumentada[i] = [x / pivote for x in aumentada[i]]
         print(f"Dividimos la fila {i + 1} por el pivote {pivote}")
         mostrar_matriz(aumentada)
 
-        # Hacer ceros en otras filas
         for j in range(n):
             if j != i:
                 factor = aumentada[j][i]
@@ -102,7 +80,7 @@ def gauss_jordan_pasos(A):
 def main():
     print("=== Inversa de matriz paso a paso usando [A|I] ===")
     n = leer_tamanio()
-    A, b = crear_matriz_por_ecuaciones(n)
+    A = crear_matriz_directa(n)
 
     print("\nMatriz A:")
     mostrar_matriz(A)
