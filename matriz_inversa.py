@@ -15,7 +15,7 @@ def leer_tamanio():
             print("Formato incorrecto. Ejemplo válido: 3x3")
 
 
-def crear_matriz_directa(n):
+def crear_matriz_directa(n): # Esta funcion se encarga de construir la matriz que el usuario ingreso.
     matriz = []
     for i in range(n): # Ciclo for para recorrer el tamanio de la matriz
         while True:
@@ -71,13 +71,13 @@ def gauss_jordan_pasos(A):
         # Aqui se divide la fila [i] entre el pivote dejando 1 en la posicion diagonal
 
         for j in range(n):
-            if j != i:
-                factor = aumentada[j][i]
-                aumentada[j] = [a - factor * b for a, b in zip(aumentada[j], aumentada[i])]
+            if j != i: # Para cada fila que sea distinta que i
+                factor = aumentada[j][i] # Esta es la entrada que buscamos eliminar
+                aumentada[j] = [a - factor * b for a, b in zip(aumentada[j], aumentada[i])] # Aqui tenemos una operacion entre fila j, fila pivote y esto hace cero la entrada en la columna i
                 print(f"Hacemos cero en la columna {i + 1}, fila {j + 1}")
                 mostrar_matriz(aumentada)
 
-    inversa = [fila[n:] for fila in aumentada]
+    inversa = [fila[n:] for fila in aumentada] # Cuando la parte izquierda de la matriz aumentada se ha convertido en la identidad, entonces la parte derechha contiene la inversa
     return inversa
 
 
