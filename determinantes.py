@@ -30,8 +30,9 @@ def validar_matriz(matriz):
                 raise ValueError("Todos los elementos deben ser numéricos y tipo Fraction")
     return True
 
-def matriz_triangular(matriz, tolerancia=1e-12):
+def matriz_triangular(matriz, tolerancia=1e-12, mostrar_pasos=False):
     n = len(matriz)
+    import copy
     matriz = copy.deepcopy(matriz)
     intercambios = 0
     for i in range(n):
@@ -42,6 +43,11 @@ def matriz_triangular(matriz, tolerancia=1e-12):
                     matriz[i], matriz[k] = matriz[k], matriz[i]
                     intercambios += 1
                     pivote = matriz[i][i]
+                    if mostrar_pasos:
+                        print(f"Intercambio de fila {i+1} con fila {k+1} por pivote cero:")
+                        for fila in matriz:
+                            print('\t'.join(str(num) for num in fila))
+                        print()
                     break
             else:
                 raise ValueError("no se encontro pivote")
@@ -50,6 +56,11 @@ def matriz_triangular(matriz, tolerancia=1e-12):
             factor = numerador / pivote
             for j in range(i, n):
                 matriz[k][j] -= factor * matriz[i][j]
+            if mostrar_pasos:
+                print(f"Eliminando elemento en fila {k+1}, columna {i+1} (factor = {factor}):")
+                for fila in matriz:
+                    print('\t'.join(str(num) for num in fila))
+                print()
     return matriz, intercambios
 
 def calcular_determinante(matriz, intercambios):
@@ -65,11 +76,12 @@ if __name__ == '__main__':
     n = leer_tamanio()
     A = crear_matriz_directa(n)
     validar_matriz(A)
-    T, intercambios = matriz_triangular(A)
-    D = calcular_determinante(T, intercambios)
     print("\nMatriz A:")
     mostrar_matriz(A)
+    print("\n--- Proceso de triangularización paso a paso ---\n")
+    T, intercambios = matriz_triangular(A, mostrar_pasos=True)
     print("\nMatriz triangular T:")
     mostrar_matriz(T)
+    D = calcular_determinante(T, intercambios)
     print(f"\nPara la matriz dada 'A' el determinante calculado es: {D}")
     print(f"\nValor en decimal: {float(D)}")
