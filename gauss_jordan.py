@@ -31,6 +31,7 @@ def convertir_ecuacion(ecuacion, variables):
     # Parse left side (variables and coefficients)
     expr_izq = partes[0]
     tree = ast.parse(expr_izq, mode='eval')
+
     def recolectar(node):
         if isinstance(node, ast.BinOp):
             if isinstance(node.op, ast.Add):
