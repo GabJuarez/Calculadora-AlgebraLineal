@@ -1,6 +1,22 @@
-from matriz_inversa import leer_tamanio, crear_matriz_directa, mostrar_matriz
+from matriz_inversa import leer_tamanio, mostrar_matriz
 from fractions import Fraction
 import copy
+
+def parse_fraction(value):
+    value = value.strip()
+    if '/' in value:
+        num, denom = value.split('/')
+        return Fraction(int(num), int(denom))
+    else:
+        return Fraction(value)
+
+def crear_matriz_directa(n):
+    matriz = []
+    for i in range(n):
+        fila = input(f"Ingrese la fila {i+1} (separe los números con espacios): ").split()
+        fila_convertida = [parse_fraction(x) for x in fila]
+        matriz.append(fila_convertida)
+    return matriz
 
 def validar_matriz(matriz):
     n = len(matriz)
@@ -10,8 +26,8 @@ def validar_matriz(matriz):
         if len(fila) != n:
             raise ValueError("La matriz debe ser cuadrada")
         for elemento in fila:
-            if not (isinstance(elemento, (int, float, Fraction))):
-                raise ValueError("Todos los elementos deben ser numéricos")
+            if not isinstance(elemento, Fraction):
+                raise ValueError("Todos los elementos deben ser numéricos y tipo Fraction")
     return True
 
 def matriz_triangular(matriz, tolerancia=1e-12):
@@ -20,34 +36,17 @@ def matriz_triangular(matriz, tolerancia=1e-12):
     intercambios = 0
     for i in range(n):
         pivote = matriz[i][i]
-        # Convertir a Fraction de forma robusta
-        if not isinstance(pivote, Fraction):
-            if isinstance(pivote, float):
-                pivote = Fraction(str(pivote))
-            else:
-                pivote = Fraction(pivote)
-        if abs(pivote) <= tolerancia:
+        if abs(float(pivote)) <= tolerancia:
             for k in range(i + 1, n):
-                if abs(matriz[k][i]) > tolerancia:
+                if abs(float(matriz[k][i])) > tolerancia:
                     matriz[i], matriz[k] = matriz[k], matriz[i]
                     intercambios += 1
                     pivote = matriz[i][i]
-                    if not isinstance(pivote, Fraction):
-                        if isinstance(pivote, float):
-                            pivote = Fraction(str(pivote))
-                        else:
-                            pivote = Fraction(pivote)
                     break
             else:
                 raise ValueError("no se encontro pivote")
         for k in range(i + 1, n):
             numerador = matriz[k][i]
-            # Convertir a Fraction de forma robusta
-            if not isinstance(numerador, Fraction):
-                if isinstance(numerador, float):
-                    numerador = Fraction(str(numerador))
-                else:
-                    numerador = Fraction(numerador)
             factor = numerador / pivote
             for j in range(i, n):
                 matriz[k][j] -= factor * matriz[i][j]
@@ -73,3 +72,4 @@ if __name__ == '__main__':
     print("\nMatriz triangular T:")
     mostrar_matriz(T)
     print(f"\nPara la matriz dada 'A' el determinante calculado es: {D}")
+    print(f"\nValor en decimal: {float(D)}")

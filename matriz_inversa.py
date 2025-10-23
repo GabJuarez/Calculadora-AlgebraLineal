@@ -32,9 +32,9 @@ def crear_matriz_directa(n): # Esta funcion se encarga de construir la matriz qu
                 print("Ingrese solo números válidos.")
     return matriz
 
-def mostrar_matriz(m):
-    for fila in m:
-        print("\t".join(f"{num:.2f}" for num in fila))
+def mostrar_matriz(matriz):
+    for fila in matriz:
+        print("\t".join(str(num) for num in fila))
     print()
 
 
