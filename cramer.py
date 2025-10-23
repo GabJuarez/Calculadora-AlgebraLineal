@@ -49,7 +49,7 @@ if __name__ == '__main__':
     for i in range(1, len(variables)+1):
         matriz_sustituida = reemplazar_columnas(A, independientes, i)
         validar_matriz(matriz_sustituida)
-        T_sust, intercambios_sust = matriz_triangular(matriz_sustituida)
+        T_sust, intercambios_sust = matriz_triangular(matriz_sustituida, mostrar_pasos=True)
         determinante_sustituido = calcular_determinante(T_sust, intercambios_sust)
         determinantes_sustituidos.append(determinante_sustituido)
 

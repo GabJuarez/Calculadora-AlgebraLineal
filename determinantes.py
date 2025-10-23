@@ -1,6 +1,5 @@
 from matriz_inversa import leer_tamanio, mostrar_matriz
 from fractions import Fraction
-import copy
 
 def parse_fraction(value):
     value = value.strip()
