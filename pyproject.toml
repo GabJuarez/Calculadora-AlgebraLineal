@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "calculadora-algebralineal"
+version = "0.1.0"
+description = "Calculadora capaz de resolver operaciones con matrices, sistemas de ecuaciones, independencia lineal de vectores y proximamente analisis numerico"
+authors = ["GabJuarez <gajuarez@uamv.edu.ni>", "smejiaa19 <silviomejiagarcia@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "^3.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
