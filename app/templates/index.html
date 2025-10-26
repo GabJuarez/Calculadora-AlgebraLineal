@@ -1,13 +1,13 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Inicio | Calculadora Álgebra Lineal{% endblock %}</title>
-</head>
-<body>
-    {% block content %}
-    <h1>Bienvenido a la Calculadora de Álgebra Lineal</h1>
-    {% endblock %}
-</body>
-</html>
+{% extends 'base.html' %}
 
+{% block title %}Inicio{% endblock %}
+
+{% block body %}
+    <h1>Calculadora Algebra Lineal</h1>
+    <div>
+        <h2>Que desea hacer? </h2>
+        <a href="{{ url_for('gaussJordan') }}">Resolver Gauss Jordan</a>
+        <a>Multiplicar Matrices</a>
+        <a>Resolver Gauss</a>
+    </div>
+{% endblock %}
