@@ -1,4 +1,4 @@
-from utils import validar_matriz
+from .utils import validar_matriz
 from fractions import Fraction
 
 
