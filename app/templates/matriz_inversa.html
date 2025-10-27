@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Matriz-Inversa{% endblock %}
+
+{% block body %}
+<h1 class="titulo_matriz">Método de la Matriz Inversa</h1>
+<div>
+    {% include '_entrada_matrices.html' %}
+</div>
+
+{% if error %}
+    <div class="error">{{ error }}</div>
+{% endif %}
+
+{% if resultado %}
+    <h2 class="titulo_matriz">Matriz Inversa:</h2>
+    <div class="matriz-label-final">A⁻¹</div>
+    <table class="matriz_resultado">
+        <tbody>
+        {% for fila in resultado.inversa %}
+        <tr>
+            {% for celda in fila %}
+            <td>{{ celda }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+{% if pasos %}
+    <h2 class="titulo_matriz">Paso a paso:</h2>
+    <ul class="pasos">
+        {% for paso in pasos %}
+        <li><strong>{{ paso[0] }}</strong>
+            {% if paso[0] == 'Matriz inversa obtenida' %}
+                <div class="matriz-label">A⁻¹</div>
+                <table class="matriz_resultado">
+                <tbody>
+                {% for fila in paso[1] %}
+                    <tr>
+                        {% for celda in fila %}
+                        <td>{{ celda }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+            {% else %}
+                <div class="matriz-label">Matriz aumentada [I | A⁻¹]</div>
+                <table class="matriz_resultado">
+                <tbody>
+                {% for fila in paso[1] %}
+                    <tr>
+                        {% for celda in fila %}
+                        <td>{{ celda }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

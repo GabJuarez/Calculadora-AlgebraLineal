@@ -26,6 +26,11 @@ def normalizar_ecuacion(ecuacion: str) -> str:
         ecuacion = ecuacion.replace(viejo, nuevo)
     return ecuacion.strip()
 
+def mostrar_matriz(matriz):
+    for fila in matriz:
+        print("\t".join(str(num) for num in fila))
+    print()
+
 
 def agregar_multiplicacion_implicita(ecuacion, variables):
     for var in variables:
@@ -112,3 +117,50 @@ def crear_matriz_identidad(tamanio):
     for i in range(tamanio):
         identidad[i][i] = 1
     return identidad
+
+def matriz_triangular_superior(matriz):
+    n = len(matriz)
+    import copy
+    matriz = copy.deepcopy(matriz)
+    for i in range(n):
+        pivote = matriz[i][i]
+        if pivote == 0:
+            for k in range(i + 1, n):
+                if matriz[k][i] != 0:
+                    matriz[i], matriz[k] = matriz[k], matriz[i]
+                    pivote = matriz[i][i]
+                    break
+            else:
+                raise ValueError("La matriz no es invertible")
+        for k in range(i + 1, n):
+            factor = matriz[k][i] / pivote
+            for j in range(i, n):
+                matriz[k][j] -= factor * matriz[i][j]
+    return matriz
+
+# fuciones auxiliares para mostrar los pasos con subindices y fracciones
+SUBS = {str(i): chr(8320 + i) for i in range(10)}
+def subindice(num):
+    """Convierte un número en subíndices unicode para notación matemática."""
+    return ''.join(SUBS.get(d, d) for d in str(num))
+
+def fraccion_str(frac):
+    """Convierte un Fraction en string, mostrando fracción si es necesario."""
+    if isinstance(frac, Fraction):
+        if frac.denominator == 1:
+            return str(frac.numerator)
+        else:
+            return f"{frac.numerator}/{frac.denominator}"
+    return str(frac)
+
+
+if __name__ == '__main__':
+    matriz = [[2, 1, -1],
+             [-3, -1, 2],
+             [-2, 1, 2]]
+
+    print("Matriz original:")
+    mostrar_matriz(matriz)
+    triangular = matriz_triangular_superior(matriz)
+    print("Matriz triangular superior:")
+    mostrar_matriz(triangular)

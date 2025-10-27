@@ -1,12 +1,56 @@
 {% extends 'base.html' %}
 
-{% block title %}Cramer{% endblock %}
+{% block title %}Regla de Cramer{% endblock %}
 
 {% block body %}
-<h1>Método de Cramer</h1>
-{% include '_entrada_matrices.html' %}
+<h1 class="titulo_matriz">Regla de Cramer</h1>
+<div>
+    {% include '_entrada_matrices.html' %}
+</div>
 
 {% if error %}
     <div class="error">{{ error }}</div>
 {% endif %}
 
+{% if resultado %}
+    <h2 class="titulo_matriz">Soluciones:</h2>
+    <ul class="soluciones">
+        {% for sol in resultado.soluciones %}
+        <li><span class="variable">x{{ loop.index }}</span> <span class="igual">=</span> <span class="valor_solucion">{{ sol }}</span></li>
+        {% endfor %}
+    </ul>
+    <h2 class="titulo_matriz">Determinante principal:</h2>
+    <ul class="soluciones">
+        <li><span class="variable">Det(A)</span> <span class="igual">=</span> <span class="valor_solucion">{{ resultado.det_A }}</span></li>
+    </ul>
+    <h2 class="titulo_matriz">Determinantes sustituidos:</h2>
+    <ul class="soluciones">
+        {% for det in resultado.determinantes %}
+        <li><span class="variable">Det(A{{ loop.index }})</span> <span class="igual">=</span> <span class="valor_solucion">{{ det }}</span></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if pasos %}
+    <h2 class="titulo_matriz">Paso a paso:</h2>
+    <ul class="pasos">
+        {% for paso in pasos %}
+        <li><strong>{{ paso[0] }}</strong>
+            {% if paso[1] %}
+            <table class="matriz_resultado">
+                <tbody>
+                {% for fila in paso[1] %}
+                    <tr>
+                    {% for celda in fila %}
+                        <td>{{ celda }}</td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

@@ -1,67 +1,53 @@
-from .utils import crear_matriz_identidad
-
-def crear_matriz_directa(n): # Esta funcion se encarga de construir la matriz que el usuario ingreso.
-    matriz = []
-    for i in range(n): # Ciclo for para recorrer el tamanio de la matriz
-        while True:
-            fila = input(f"Ingrese la fila {i + 1} (separe los números con espacios): ")
-            numeros = fila.strip().split() # Eliminamos espacios al inicio
-            if len(numeros) != n:
-                print(f"Debe ingresar exactamente {n} números.") # Esto valida que la cantidad de valores sea n
-                continue
-            try:
-                fila_numeros = [float(x) for x in numeros] # Aqui convertirmos la entrada a flotantes para tener mayor precision
-                matriz.append(fila_numeros)
-                break
-            except ValueError:
-                print("Ingrese solo números válidos.")
-    return matriz
-
-def mostrar_matriz(matriz):
-    for fila in matriz:
-        print("\t".join(str(num) for num in fila))
-    print()
+from app.logic.utils import crear_matriz_identidad, fraccion_str, subindice
+from fractions import Fraction
 
 def gauss_jordan_pasos(A):
     n = len(A)
+    # Convertir todos los elementos a Fraction
+    A_frac = [[Fraction(str(x)) for x in fila] for fila in A]
     I = crear_matriz_identidad(n)
-    aumentada = [A[i] + I[i] for i in range(n)]
-    # Para cada fila i concatenamos la fila A[i] con la fila I[i] formando la matriz aumentada
+    I_frac = [[Fraction(str(x)) for x in fila] for fila in I]
+    aumentada = [A_frac[i] + I_frac[i] for i in range(n)]
+    pasos = [("Matriz aumentada inicial [Matriz | I]", [[fraccion_str(x) for x in fila] for fila in aumentada])]
 
-    print("Matriz aumentada inicial [A | I]:")
-    mostrar_matriz(aumentada)
-
-    # Bucle principal por columna/fila pivote:
     for i in range(n):
         pivote = aumentada[i][i]
         if pivote == 0:
-            for k in range(i + 1, n): # Se busca una fila tal que aumentada[k][i] != 0 y si se encuentra se intercambian filas
+            for k in range(i + 1, n):
                 if aumentada[k][i] != 0:
                     aumentada[i], aumentada[k] = aumentada[k], aumentada[i]
                     pivote = aumentada[i][i]
-                    print(f"Intercambiamos fila {i + 1} con fila {k + 1} por pivote cero")
-                    mostrar_matriz(aumentada)
+                    pasos.append((f"F{subindice(i+1)} ↔ F{subindice(k+1)}", [[fraccion_str(x) for x in fila] for fila in aumentada]))
                     break
-            else: # Si no se encuentra la fila k entonces la matriz no es invertible
+            else:
                 raise ValueError("La matriz no tiene inversa.")
-
         aumentada[i] = [x / pivote for x in aumentada[i]]
-        print(f"Dividimos la fila {i + 1} por el pivote {pivote}")
-        mostrar_matriz(aumentada)
-        # Aqui se divide la fila [i] entre el pivote dejando 1 en la posicion diagonal
-
+        pasos.append((f"F{subindice(i+1)} → F{subindice(i+1)} ÷ {fraccion_str(pivote)}", [[fraccion_str(x) for x in fila] for fila in aumentada]))
         for j in range(n):
-            if j != i: # Para cada fila que sea distinta que i
-                factor = aumentada[j][i] # Esta es la entrada que buscamos eliminar
-                aumentada[j] = [a - factor * b for a, b in zip(aumentada[j], aumentada[i])] # Aqui tenemos una operacion entre fila j, fila pivote y esto hace cero la entrada en la columna i
-                print(f"Hacemos cero en la columna {i + 1}, fila {j + 1}")
-                mostrar_matriz(aumentada)
-
-    inversa = [fila[n:] for fila in aumentada] # Cuando la parte izquierda de la matriz aumentada se ha convertido en la identidad, entonces la parte derechha contiene la inversa
-    return inversa
-
-
-
+            if j != i:
+                factor = aumentada[j][i]
+                if factor != 0:
+                    aumentada[j] = [a - factor * b for a, b in zip(aumentada[j], aumentada[i])]
+                    pasos.append((f"F{subindice(j+1)} → F{subindice(j+1)} − {fraccion_str(factor)} × F{subindice(i+1)}", [[fraccion_str(x) for x in fila] for fila in aumentada]))
+    inversa = [fila[n:] for fila in aumentada]
+    inversa_str = [[fraccion_str(x) for x in fila] for fila in inversa]
+    pasos.append(("Matriz inversa obtenida", inversa_str))
+    return inversa_str, pasos
 
 if __name__ == "__main__":
-    pass
+    matriz = [
+        [5, 2],
+        [-7, -3]
+    ]
+
+    inversa, pasos = gauss_jordan_pasos(matriz)
+    print("Matriz Inversa:")
+    for fila in inversa:
+        print("\t".join(fila))
+    print("\nPasos:")
+    for descripcion, matriz_paso in pasos:
+        print(descripcion)
+        for fila in matriz_paso:
+            print("\t".join(fila))
+        print()
+

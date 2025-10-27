@@ -3,15 +3,17 @@
 {% block title %}Gauss-Jordan{% endblock %}
 
 {% block body %}
-<h1>Metodo Gauss-Jordan</h1>
-{% include '_entrada_matrices.html' %}
+<h1 class="titulo_matriz">Método Gauss-Jordan</h1>
+<div>
+    {% include '_entrada_matrices.html' %}
+</div>
 
 {% if error %}
     <div class="error">{{ error }}</div>
 {% endif %}
 
 {% if resultado %}
-    <h2 class = "titulos_gauss_jordan">Matriz reducida:</h2>
+    <h2 class="titulo_matriz">Matriz reducida:</h2>
     <table class="matriz_resultado">
         <thead>
             <tr>
@@ -31,7 +33,7 @@
         {% endfor %}
         </tbody>
     </table>
-    <h2 class="titulos_gauss_jordan">Soluciones:</h2>
+    <h2 class="titulo_matriz">Soluciones:</h2>
     <ul class="soluciones">
         {% for sol in resultado.soluciones %}
         <li><span class="variable">x{{ loop.index }}</span> <span class="igual">=</span> <span class="valor_solucion">{{ sol }}</span></li>
@@ -40,10 +42,10 @@
 {% endif %}
 
 {% if pasos %}
-    <h2 class="titulos_gauss_jordan">Paso a paso:</h2>
+    <h2 class="titulo_matriz">Paso a paso:</h2>
     <ul class="pasos">
         {% for paso in pasos %}
-        <li class="titulos_gauss_jordan" id="pasos"><strong>{{ paso[0] }}</strong>
+        <li><strong>{{ paso[0] }}</strong>
             <table class="matriz_resultado">
             <thead>
                 <tr>

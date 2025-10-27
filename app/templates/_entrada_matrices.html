@@ -6,6 +6,7 @@
         <input type="number" id="columnas" name="columnas" value="3" min="1" max="10" step="1">
     </div>
     <div id="matriz"></div>
-    <button type="submit" class="enviar_matriz">Calcular Gauss-Jordan</button>
+    <button type="submit" class="boton_calcular">Calcular</button>
+    <button type="button" class="boton_volver" onclick="window.location.href='/'">Página Principal</button>
 </form>
 <script src="{{ url_for('static', filename='js/entrada_matrices.js') }}"></script>

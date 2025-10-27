@@ -1,0 +1,54 @@
+/* Estilos generales para títulos y tablas de matrices */
+.titulo_matriz {
+    color: #A7E3C2;
+    text-align: center;
+    margin-top: 40px;
+    font-size: 1.5em;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px #18363a;
+}
+.matriz_resultado {
+    margin: 30px auto;
+    border-collapse: collapse;
+    box-shadow: 0 4px 18px rgba(34, 46, 52, 0.18);
+    background: #18363a;
+    border-radius: 12px;
+    overflow: hidden;
+    min-width: 320px;
+    max-width: 90vw;
+}
+.matriz_resultado th {
+    background: linear-gradient(90deg, #1A3A40 80%, #20444a 100%);
+    color: #DAF1DE;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-bottom: 2px solid #DAF1DE;
+    text-align: center;
+    font-size: 1.15em;
+    letter-spacing: 1px;
+}
+.matriz_resultado td {
+    border: 1px solid #DAF1DE;
+    padding: 10px 20px;
+    text-align: center;
+    color: #DAF1DE;
+    background: #20444a;
+    font-size: 1.15em;
+    transition: background 0.2s;
+}
+.matriz_resultado tr {
+    background: #163136;
+}
+.matriz_resultado tr:hover td {
+    background: #2a5c66;
+}
+.matriz-label-final {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #A7E3C2;
+    margin: 18px 0 8px 0;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px #18363a;
+}

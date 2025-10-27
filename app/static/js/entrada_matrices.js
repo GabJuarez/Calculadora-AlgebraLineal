@@ -48,9 +48,9 @@ function valorConvertido(valor) {
     } else if (/^-?\d+\.\d+$/.test(valor)) {
         return parseFloat(valor);
     } else if (/^-?\d+\/\d+$/.test(valor)) {
-        return valor; // Se envía como string para que Python lo convierta a Fraction
+        return valor;
     } else {
-        return valor; // Si no es válido, se envía como string (será validado en Python)
+        return valor;
     }
 }
 
@@ -70,7 +70,6 @@ function validarMatriz() {
                 input.focus();
                 break;
             }
-            // Convierte el valor antes de enviar (opcional, solo si usas AJAX)
             input.value = valorConvertido(valor);
         }
         if (!valido) break;

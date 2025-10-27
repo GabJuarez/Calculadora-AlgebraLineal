@@ -1,12 +1,11 @@
-from .utils import validar_matriz
+from .utils import validar_matriz, subindice, fraccion_str
 from fractions import Fraction
-
 
 def gauss_jordan(matriz):
     """
     Resuelve un sistema de ecuaciones lineales usando el metodo de Gauss-Jordan
     La matriz debe ser aumentada (coeficientes + terminos independientes)
-    Devuelve la matriz reducida, la solución y el paso a paso
+    Devuelve la matriz reducida, la solucion y el paso a paso
     """
     validar_matriz(matriz)
     n = len(matriz)
@@ -21,51 +20,31 @@ def gauss_jordan(matriz):
             raise ValueError("El sistema no tiene solución única (columna nula).")
         if max_row != i:
             A[i], A[max_row] = A[max_row], A[i]
-            pasos.append((f"Intercambio fila {i+1} con fila {max_row+1}", [fila.copy() for fila in A]))
+            pasos.append((f"F{subindice(i+1)} ↔ F{subindice(max_row+1)}", [fila.copy() for fila in A]))
         # normalizar la fila i
         pivote = A[i][i]
         A[i] = [elem / pivote for elem in A[i]]
-        pasos.append((f"Normalizar fila {i+1} (dividir por pivote {pivote})", [fila.copy() for fila in A]))
+        pasos.append((f"F{subindice(i+1)} → F{subindice(i+1)} ÷ {fraccion_str(pivote)}", [fila.copy() for fila in A]))
         # eliminar todos los demas elementos en la columna i
         for j in range(n):
             if j != i:
                 factor = A[j][i]
                 if factor != 0:
                     A[j] = [A[j][k] - factor * A[i][k] for k in range(m)]
-                    pasos.append((f"Eliminar elemento en fila {j+1}, columna {i+1} (restar {factor} * fila {i+1})", [fila.copy() for fila in A]))
+                    pasos.append((f"F{subindice(j+1)} → F{subindice(j+1)} − {fraccion_str(factor)} × F{subindice(i+1)}", [fila.copy() for fila in A]))
     soluciones = [A[i][-1] for i in range(n)]
     pasos.append(("Matriz reducida final", [fila.copy() for fila in A]))
-    pasos.append(("Soluciones", [soluciones]))
 
-    for i in range(len(A)):
-        for j in range(len(A[0])):
-            if A[i][j].denominator == 1:
-                A[i][j] = A[i][j].numerator
-            else:
-                numerador = str(A[i][j].numerator)
-                denominador = str(A[i][j].denominator)
-                A[i][j] = f"{numerador}/{denominador}"
+    matriz_reducida = [[fraccion_str(A[i][j]) for j in range(m)] for i in range(n)]
+    soluciones_str = [fraccion_str(sol) for sol in soluciones]
+    pasos_str = []
+    for descripcion, matriz_paso in pasos:
+        matriz_paso_str = [[fraccion_str(elem) for elem in fila] for fila in matriz_paso]
+        pasos_str.append((descripcion, matriz_paso_str))
 
-    for i in range(len(pasos)):
-        for j in range(len(pasos[i][1])):
-            for k in range(len(pasos[i][1][j])):
-                if pasos[i][1][j][k].denominator == 1:
-                    pasos[i][1][j][k] = pasos[i][1][j][k].numerator
-                else:
-                    numerador = str(pasos[i][1][j][k].numerator)
-                    denominador = str(pasos[i][1][j][k].denominator)
-                    pasos[i][1][j][k] = f"{numerador}/{denominador}"
+    return matriz_reducida, soluciones_str, pasos_str
 
-    for i in range(len(soluciones)):
-        if soluciones[i].denominator == 1:
-            soluciones[i] = soluciones[i].numerator
-        else:
-            numerador = str(soluciones[i].numerator)
-            denominador = str(soluciones[i].denominator)
-            soluciones[i] = f"{numerador}/{denominador}"
-
-    return A, soluciones, pasos
-
+# prueba del modulo en consola
 if __name__ == "__main__":
     matriz = [[1, 2, 3],
               [4, 5, 6]]
