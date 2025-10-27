@@ -12,5 +12,9 @@ def index():
 def gaussJordan():
     return render_template('Gauss-Jordan.html')
 
+@app.route('/Gauss')
+def Gauss():
+    return render_template('Gauss.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
