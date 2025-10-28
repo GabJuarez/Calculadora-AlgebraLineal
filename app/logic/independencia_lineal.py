@@ -1,80 +1,74 @@
-# python
-try:
-    from .utils import validar_matriz, subindice, fraccion_str
-except Exception:
-    try:
-        from app.logic.utils import validar_matriz, subindice, fraccion_str
-    except Exception:
-        from fractions import Fraction
-        def validar_matriz(matriz):
-            return True
-        def subindice(num):
-            return str(num)
-        def fraccion_str(f):
-            if isinstance(f, Fraction):
-                return str(f.numerator) if f.denominator == 1 else f"{f.numerator}/{f.denominator}"
-            return str(f)
-
+from .utils import validar_matriz, subindice, fraccion_str
 from fractions import Fraction
-import copy
 
-def independencia_lineal(matriz):
+
+def comprobar_independencia_lineal(matriz):
     """
-    Comprueba independencia lineal de los vectores dados como *columnas* de la matriz.
+    Comprueba la independencia lineal de los vectores dados como *columnas* de la matriz.
     Devuelve:
-      - matriz_reducida_str: matriz en RREF con elementos como strings (fracciones)
-      - resultado_str: lista de strings con resumen (independiente/ dependiente, rango, vectores independientes)
-      - pasos_str: lista de tuplas (descripcion, matriz_en_strings) con los pasos intermedios
+      - matriz_reducida_str: matriz en RREF con elementos como cadenas (fracciones)
+      - resultado_str: lista de cadenas con resumen (independiente/ dependiente, rango, vectores independientes)
+      - pasos_str: lista de tuplas (descripción, matriz_en_cadenas) con los pasos intermedios
     """
     validar_matriz(matriz)
-    n = len(matriz)
-    m = len(matriz[0])
+    filas = len(matriz)
+    columnas = len(matriz[0])
+
+    # Verificar si el número de vectores (columnas) es mayor que el número de entradas (filas)
+    if columnas > filas:
+        return None, [
+            "Dependientes",
+            f"Rango: {filas}",
+            "El número de vectores es mayor que el número de entradas, por lo que son linealmente dependientes."
+        ], []
+
     # trabajar con Fracciones
-    A = [[Fraction(elem) for elem in fila] for fila in matriz]
-    pasos = [("Matriz inicial", [fila.copy() for fila in A])]
+    matriz_fracciones = [[Fraction(elem) for elem in fila] for fila in matriz]
+    pasos = [("Matriz inicial", [fila.copy() for fila in matriz_fracciones])]
 
     # algoritmo RREF recorriendo columnas (permite más columnas que filas)
-    row = 0
-    pivots = []
-    A_work = [fila.copy() for fila in A]
+    fila_actual = 0
+    pivotes = []
+    matriz_trabajo = [fila.copy() for fila in matriz_fracciones]
 
-    for col in range(m):
-        if row >= n:
+    for columna in range(columnas):
+        if fila_actual >= filas:
             break
-        # encontrar fila con máximo en valor absoluto en esta columna desde 'row'
-        max_row = max(range(row, n), key=lambda r: abs(A_work[r][col]))
-        if A_work[max_row][col] == 0:
+        # encontrar fila con máximo en valor absoluto en esta columna desde 'fila_actual'
+        fila_maxima = max(range(fila_actual, filas), key=lambda r: abs(matriz_trabajo[r][columna]))
+        if matriz_trabajo[fila_maxima][columna] == 0:
             continue  # no pivote en esta columna
-        if max_row != row:
-            A_work[row], A_work[max_row] = A_work[max_row], A_work[row]
-            pasos.append((f"F{subindice(row+1)} ↔ F{subindice(max_row+1)}", [[fraccion_str(el) for el in f] for f in A_work]))
-        piv = A_work[row][col]
-        # normalizar fila pivot
-        A_work[row] = [elem / piv for elem in A_work[row]]
-        pasos.append((f"F{subindice(row+1)} → F{subindice(row+1)} ÷ {fraccion_str(piv)}", [[fraccion_str(el) for el in f] for f in A_work]))
+        if fila_maxima != fila_actual:
+            matriz_trabajo[fila_actual], matriz_trabajo[fila_maxima] = matriz_trabajo[fila_maxima], matriz_trabajo[fila_actual]
+            pasos.append((f"F{subindice(fila_actual+1)} ↔ F{subindice(fila_maxima+1)}", [[fraccion_str(el) for el in f] for f in matriz_trabajo]))
+        pivote = matriz_trabajo[fila_actual][columna]
+
+        # normalizar fila pivote
+        matriz_trabajo[fila_actual] = [elem / pivote for elem in matriz_trabajo[fila_actual]]
+        pasos.append((f"F{subindice(fila_actual+1)} → F{subindice(fila_actual+1)} ÷ {fraccion_str(pivote)}", [[fraccion_str(el) for el in f] for f in matriz_trabajo]))
         # eliminar en todas las demás filas
-        for r in range(n):
-            if r != row and A_work[r][col] != 0:
-                factor = A_work[r][col]
-                A_work[r] = [A_work[r][k] - factor * A_work[row][k] for k in range(m)]
-                pasos.append((f"F{subindice(r+1)} → F{subindice(r+1)} − {fraccion_str(factor)} × F{subindice(row+1)}", [[fraccion_str(el) for el in f] for f in A_work]))
-        pivots.append((row, col))
-        row += 1
+        for r in range(filas):
+            if r != fila_actual and matriz_trabajo[r][columna] != 0:
+                factor = matriz_trabajo[r][columna]
+                matriz_trabajo[r] = [matriz_trabajo[r][k] - factor * matriz_trabajo[fila_actual][k] for k in range(columnas)]
+                pasos.append((f"F{subindice(r+1)} → F{subindice(r+1)} − {fraccion_str(factor)} × F{subindice(fila_actual+1)}", [[fraccion_str(el) for el in f] for f in matriz_trabajo]))
+        pivotes.append((fila_actual, columna))
+        fila_actual += 1
 
     # preparar resultados
-    rango = len(pivots)
-    independientes = [col for (_, col) in pivots]
-    es_independiente = (rango == m)
+    rango = len(pivotes)
+    independientes = [col for (_, col) in pivotes]
+    es_independiente = (rango == columnas)
     estado = "Independientes" if es_independiente else "Dependientes"
-    vectores_ind = [subindice(c+1) for c in independientes]  # 1-based con subíndices
+    vectores_independientes = [subindice(c+1) for c in independientes]  # 1-based con subíndices
 
-    matriz_reducida_str = [[fraccion_str(A_work[i][j]) for j in range(m)] for i in range(n)]
+    matriz_reducida_str = [[fraccion_str(matriz_trabajo[i][j]) for j in range(columnas)] for i in range(filas)]
     resultado_str = [
         estado,
         f"Rango: {rango}",
-        "Vectores independientes (columnas): [" + ", ".join(vectores_ind) + "]"
+        "Vectores independientes (columnas): [" + ", ".join(vectores_independientes) + "]"
     ]
-    pasos_str = pasos + [("Matriz en forma reducida (RREF)", [[fraccion_str(el) for el in f] for f in A_work])]
+    pasos_str = pasos + [("Matriz en forma reducida (RREF)", [[fraccion_str(el) for el in f] for f in matriz_trabajo])]
 
     return matriz_reducida_str, resultado_str, pasos_str
 
@@ -100,7 +94,7 @@ if __name__ == "__main__":
     for nombre, matriz in sistemas.items():
         print("\n" + "=" * 60)
         print(nombre)
-        mt, res, pasos = independencia_lineal(matriz)
+        mt, res, pasos = comprobar_independencia_lineal(matriz)
         print("Matriz reducida:")
         for fila in mt:
             print(fila)
@@ -112,4 +106,3 @@ if __name__ == "__main__":
                 print(f)
             print()
         print("=" * 60 + "\n")
-

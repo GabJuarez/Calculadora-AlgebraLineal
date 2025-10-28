@@ -73,3 +73,4 @@ def matrizInversa():
         except Exception as e:
             error = str(e)
     return render_template('matriz_inversa.html', resultado=resultado, error=error, pasos=pasos)
+
