@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}Eliminación Gaussiana{% endblock %}
+{% block title %}Determinante de una matriz{% endblock %}
 
 {% block body %}
-<h1 class="titulo_matriz">Método de Eliminación Gaussiana</h1>
+<h1 class="titulo_matriz">Determinante de una matriz</h1>
 <div>
     {% include '_entrada_matrices.html' %}
 </div>
@@ -12,17 +12,16 @@
     <div class="error">{{ error }}</div>
 {% endif %}
 
+{% if determinante is not none %}
+    <h2 class="titulo_matriz">Determinante:</h2>
+    <div class="resultado-determinante">
+        <strong>{{ determinante }}</strong>
+    </div>
+{% endif %}
+
 {% if matriz_triangular %}
     <h2 class="titulo_matriz">Matriz triangular superior:</h2>
     <table class="matriz_resultado">
-        <thead>
-            <tr>
-                {% for i in range(matriz_triangular[0]|length - 1) %}
-                    <th>x{{ i+1 }}</th>
-                {% endfor %}
-                <th>b</th>
-            </tr>
-        </thead>
         <tbody>
         {% for fila in matriz_triangular %}
         <tr>
@@ -35,31 +34,38 @@
     </table>
 {% endif %}
 
-{% if soluciones %}
-    <h2 class="titulo_matriz">Soluciones:</h2>
-    <ul class="soluciones">
-        {% for sol in soluciones %}
-        <li><span class="variable">x{{ loop.index }}</span> <span class="igual">=</span> <span class="valor_solucion">{{ sol }}</span></li>
-        {% endfor %}
-    </ul>
-{% endif %}
-
-{% if pasos %}
-    <h2 class="titulo_matriz">Paso a paso:</h2>
+{% if pasos_triangular %}
+    <h2 class="titulo_matriz">Paso a paso para triangularización:</h2>
     <ul class="pasos">
-        {% for paso, matriz in pasos %}
+        {% for paso, matriz in pasos_triangular %}
         <li>
             <strong>{{ paso }}</strong>
             {% if matriz %}
             <table class="matriz_resultado">
-                <thead>
+                <tbody>
+                {% for fila in matriz %}
                     <tr>
-                        {% for i in range(matriz[0]|length - 1) %}
-                            <th>x{{ i+1 }}</th>
-                        {% endfor %}
-                        <th>b</th>
+                    {% for celda in fila %}
+                        <td>{{ celda }}</td>
+                    {% endfor %}
                     </tr>
-                </thead>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if pasos_determinante %}
+    <h2 class="titulo_matriz">Cálculo del determinante:</h2>
+    <ul class="pasos">
+        {% for paso, matriz in pasos_determinante %}
+        <li>
+            <strong>{{ paso }}</strong>
+            {% if matriz %}
+            <table class="matriz_resultado">
                 <tbody>
                 {% for fila in matriz %}
                     <tr>
@@ -76,3 +82,4 @@
     </ul>
 {% endif %}
 {% endblock %}
+

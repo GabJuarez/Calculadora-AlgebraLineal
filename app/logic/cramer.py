@@ -1,4 +1,4 @@
-from .determinantes import calcular_determinante, matriz_triangular, validar_matriz
+from .determinante import calcular_determinante, validar_matriz
 from fractions import Fraction
 from .utils import subindice, fraccion_str
 
@@ -10,13 +10,14 @@ def reemplazar_columnas(matriz, vector_independientes, columna):
         sustituida[i][columna] = vector_independientes[i]
     return sustituida
 
+
 def resolver_cramer(A, B):
     A_fraccion = [[Fraction(str(x)) for x in fila] for fila in A]
     B_fraccion = [Fraction(str(x)) for x in B]
     validar_matriz(A_fraccion)
     n = len(A_fraccion)
-    T, intercambios = matriz_triangular(A_fraccion)
-    determinante_A = calcular_determinante(T, intercambios)
+    # Calcular determinante principal
+    determinante_A, _ = calcular_determinante(A_fraccion)
     if determinante_A == 0:
         raise ValueError('El sistema no tiene solución única (determinante cero)')
     determinantes_sustituidos = []
@@ -26,14 +27,14 @@ def resolver_cramer(A, B):
     for i in range(1, n + 1):
         matriz_sustituida = reemplazar_columnas(A_fraccion, B_fraccion, i)
         validar_matriz(matriz_sustituida)
-        T_sustituida, intercambiada_sustituida = matriz_triangular(matriz_sustituida)
-        determinante_sustituida = calcular_determinante(T_sustituida, intercambiada_sustituida)
+        determinante_sustituida, _ = calcular_determinante(matriz_sustituida)
         determinantes_sustituidos.append(determinante_sustituida)
         solucion = determinante_sustituida / determinante_A
         matriz_sustituida_str = [[fraccion_str(x) for x in fila] for fila in matriz_sustituida]
         pasos.append((f"Reemplazamos la columna {i} de A por el vector de independientes B para calcular A{subindice(i)}:", matriz_sustituida_str))
         pasos.append((f"Calculamos el determinante: Det(A{subindice(i)}) = {fraccion_str(determinante_sustituida)}", None))
         pasos.append((f"Calculamos la solución: x{subindice(i)} = Det(A{subindice(i)}) / Det(A) = {fraccion_str(determinante_sustituida)} / {fraccion_str(determinante_A)} = {fraccion_str(solucion)}", None))
+        soluciones.append(solucion)
     soluciones_str = [fraccion_str(sol) for sol in soluciones]
     determinantes_str = [fraccion_str(det) for det in determinantes_sustituidos]
     return soluciones_str, fraccion_str(determinante_A), determinantes_str, pasos

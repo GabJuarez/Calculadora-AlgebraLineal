@@ -1,21 +1,37 @@
 .boton_calcular, .boton_volver, .limpiar_matriz {
     display: inline-block;
-    background: linear-gradient(90deg, #1A3A40 80%, #20444a 100%);
-    color: #DAF1DE;
-    font-size: 1.08em;
-    font-weight: 600;
-    padding: 12px 28px;
-    border-radius: 10px;
-    border: 2px solid #A7E3C2;
-    margin: 18px 10px 0 0;
+    background: linear-gradient(90deg, #232946 80%, #393e6c 100%);
+    color: #A7E3C2;
+    font-size: 1.12em;
+    font-weight: 700;
+    padding: 14px 32px;
+    border-radius: 12px;
+    border: 2px solid #393e6c;
+    margin: 22px 12px 0 0;
     cursor: pointer;
-    box-shadow: 0 2px 8px #18363a33;
+    box-shadow: 0 2px 12px #23294633;
     transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+    letter-spacing: 1.2px;
 }
 .boton_calcular:hover, .boton_volver:hover, .limpiar_matriz:hover {
-    background: #A7E3C2;
-    color: #22262a;
-    border-color: #A7E3C2;
-    transform: scale(1.04);
+    background: #A7C7E3;
+    color: #232946;
+    border-color: #A7C7E3;
+    transform: scale(1.06);
 }
-
+input, textarea {
+    background: #232946;
+    color: #A7E3C2;
+    border: 2px solid #393e6c;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 1.08em;
+    margin: 10px 0;
+    box-shadow: 0 2px 8px #23294622;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+input:focus, textarea:focus {
+    border-color: #FFD700;
+    box-shadow: 0 4px 16px #FFD70033;
+    outline: none;
+}

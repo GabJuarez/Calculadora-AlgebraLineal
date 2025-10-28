@@ -1,47 +1,52 @@
-/* Estilos generales para títulos y tablas de matrices */
 .titulo_matriz {
     color: #A7E3C2;
     text-align: center;
     margin-top: 40px;
-    font-size: 1.5em;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-shadow: 0 2px 8px #18363a;
+    font-size: 1.7em;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-shadow: 0 2px 12px #23294699;
 }
 .matriz_resultado {
-    margin: 30px auto;
+    margin: 32px auto;
     border-collapse: collapse;
     box-shadow: 0 4px 18px rgba(34, 46, 52, 0.18);
-    background: #18363a;
-    border-radius: 12px;
+    background: #232946;
+    border-radius: 16px;
     overflow: hidden;
     min-width: 320px;
     max-width: 90vw;
+    animation: fadeInMatriz 0.7s ease-in;
+}
+@keyframes fadeInMatriz {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 .matriz_resultado th {
-    background: linear-gradient(90deg, #1A3A40 80%, #20444a 100%);
-    color: #DAF1DE;
+    background: linear-gradient(90deg, #393e6c 80%, #232946 100%);
+    color: #A7E3C2;
     font-weight: bold;
-    padding: 10px 20px;
-    border-bottom: 2px solid #DAF1DE;
+    padding: 12px 22px;
+    border-bottom: 2px solid #A7E3C2;
     text-align: center;
-    font-size: 1.15em;
-    letter-spacing: 1px;
+    font-size: 1.18em;
+    letter-spacing: 1.2px;
 }
 .matriz_resultado td {
-    border: 1px solid #DAF1DE;
-    padding: 10px 20px;
+    border: 1px solid #A7E3C2;
+    padding: 12px 22px;
     text-align: center;
-    color: #DAF1DE;
-    background: #20444a;
-    font-size: 1.15em;
+    color: #F4F4F6;
+    background: #393e6c;
+    font-size: 1.18em;
     transition: background 0.2s;
 }
 .matriz_resultado tr {
-    background: #163136;
+    background: #232946;
 }
 .matriz_resultado tr:hover td {
-    background: #2a5c66;
+    background: #314a6e;
+    color: #6EC1E4;
 }
 .matriz-label-final {
     text-align: center;
@@ -50,5 +55,84 @@
     color: #A7E3C2;
     margin: 18px 0 8px 0;
     letter-spacing: 1px;
-    text-shadow: 0 2px 8px #18363a;
+    text-shadow: 0 2px 8px #232946;
+}
+.soluciones {
+    margin: 32px auto 0 auto;
+    padding: 0;
+    list-style: none;
+    width: fit-content;
+    background: #232946;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(34, 46, 52, 0.13);
+    border: 1.5px solid #A7E3C2;
+    animation: fadeInSoluciones 0.7s ease-in;
+}
+@keyframes fadeInSoluciones {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.soluciones li {
+    color: #F4F4F6;
+    font-size: 1.22em;
+    padding: 14px 32px;
+    border-bottom: 1px solid #393e6c;
+    text-align: left;
+    letter-spacing: 1.2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #393e6c;
+    transition: background 0.2s, color 0.2s;
+}
+.soluciones li:last-child {
+    border-bottom: none;
+}
+.soluciones li:hover {
+    background: #A7E3C2;
+    color: #232946;
+}
+.variable {
+    color: #6EC1E4;
+    font-weight: bold;
+    font-size: 1.22em;
+    margin-right: 6px;
+    letter-spacing: 1.2px;
+}
+.igual {
+    color: #A7E3C2;
+    font-weight: bold;
+    margin: 0 6px;
+    font-size: 1.22em;
+}
+.valor_solucion {
+    color: #FFD700;
+    font-weight: bold;
+    font-size: 1.22em;
+    letter-spacing: 1.2px;
+}
+.resultado-determinante {
+    margin: 36px auto 0 auto;
+    padding: 20px 44px;
+    width: fit-content;
+    background: linear-gradient(90deg, #fffbe6 80%, #f6f8fa 100%);
+    border: 2.5px solid #FFD700;
+    border-radius: 16px;
+    font-size: 2.3em;
+    color: #232946;
+    font-weight: bold;
+    box-shadow: 0 6px 24px rgba(255, 215, 0, 0.13);
+    text-align: center;
+    letter-spacing: 1.7px;
+    opacity: 0;
+    animation: fadeInDeterminante 0.7s ease-in forwards;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+@keyframes fadeInDeterminante {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.resultado-determinante:hover {
+    box-shadow: 0 12px 36px rgba(167, 227, 194, 0.18);
+    border-color: #A7E3C2;
 }

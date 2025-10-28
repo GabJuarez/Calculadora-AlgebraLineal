@@ -7,13 +7,14 @@
     <aside class="panel-lateral">
         <nav>
             <ul class="panel-lista">
-                <li><a href="{{ url_for('routes_bp.matrizInversa') }}">Matriz inversa</a></li>
-                <li><a href="{{ url_for('routes_bp.gaussJordan') }}">Método de Gauss-Jordan</a></li>
-                <li><a href="{{ url_for('routes_bp.cramer') }}">Regla de Cramer</a></li>
-                <li><a href="#">Determinante de una matriz</a> </li>
-                <li><a href="#">Matriz transpuesta</a></li>
+                <li><a href="{{ url_for('routes_bp.gauss_jordan_view') }}">Método de Gauss-Jordan</a></li>
+                <li><a href="{{ url_for('routes_bp.eliminacion_gaussiana_view') }}">Eliminación Gaussiana</a></li>
+                <li><a href="{{ url_for('routes_bp.cramer_view') }}">Regla de Cramer</a></li>
+                <li><a href="{{ url_for('routes_bp.determinante_view') }}">Determinante de una matriz</a></li>
+                <li><a href="{{ url_for('routes_bp.matriz_inversa_view') }}">Matriz inversa</a></li>
+                <li><a href="{{ url_for('routes_bp.traspuesta_view') }}">Matriz traspuesta</a></li>
                 <li><a href="#">Suma/Resta de matrices</a></li>
-                <li><a href="#">Operaciones con escalares</a> </li>
+                <li><a href="#">Operaciones con escalares</a></li>
                 <li><a href="#">Multiplicación de matrices</a></li>
                 <li><a href="#">Independencia lineal de vectores</a></li>
             </ul>

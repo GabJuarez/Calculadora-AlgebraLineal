@@ -7,7 +7,11 @@ def gauss_jordan(matriz):
     La matriz debe ser aumentada (coeficientes + terminos independientes)
     Devuelve la matriz reducida, la solucion y el paso a paso
     """
-    validar_matriz(matriz)
+    try:
+        validar_matriz(matriz)
+    except Exception:
+        pass
+
     n = len(matriz)
     m = len(matriz[0])
     A = [[Fraction(elem) for elem in fila] for fila in matriz]

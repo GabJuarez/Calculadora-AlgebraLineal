@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Matriz Traspuesta{% endblock %}
+
+{% block body %}
+<h1 class="titulo_matriz">Matriz Traspuesta</h1>
+<div>
+    {% include '_entrada_matrices.html' %}
+</div>
+
+{% if error %}
+    <div class="error">{{ error }}</div>
+{% endif %}
+
+{% if matriz_traspuesta %}
+    <h2 class="titulo_matriz">Matriz traspuesta:</h2>
+    <table class="matriz_resultado">
+        <tbody>
+        {% for fila in matriz_traspuesta %}
+        <tr>
+            {% for celda in fila %}
+            <td>{{ celda }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+{% if pasos %}
+    <h2 class="titulo_matriz">Paso a paso:</h2>
+    <ul class="pasos">
+        {% for paso, matriz in pasos %}
+        <li>
+            <strong>{{ paso }}</strong>
+            {% if matriz %}
+            <table class="matriz_resultado">
+                <tbody>
+                {% for fila in matriz %}
+                    <tr>
+                    {% for celda in fila %}
+                        <td>{{ celda }}</td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </li>
+        {% endfor %}
+        <li>
+            <p>
+                para calcular la traspuesta de una matriz, las filas de la matriz se convierten en las columnas y
+                las columnas en las filas. Si la matriz es no es cuadrada, las dimensiones de la matriz traspuesta
+                serán diferentes a las dimensiones de la matriz original (se invierten).
+            </p>
+        <li>
+</li>
+    </ul>
+{% endif %}
+{% endblock %}
+

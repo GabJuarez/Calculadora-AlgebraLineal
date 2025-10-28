@@ -1,4 +1,4 @@
-from app.logic.utils import crear_matriz_identidad, fraccion_str, subindice
+from .utils import crear_matriz_identidad, fraccion_str, subindice
 from fractions import Fraction
 
 def gauss_jordan_pasos(A):

@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request
-from app.logic import gauss_jordan, resolver_cramer, gauss_jordan_pasos
-from app import matriz_desde_formulario
+from app import (gauss_jordan, resolver_cramer, gauss_jordan_pasos,
+                 eliminacion_gaussiana, matriz_desde_formulario, traspuesta,
+                 matriz_triangular,calcular_determinante)
 import re
 
 routes_bp = Blueprint('routes_bp', __name__)
@@ -26,7 +27,7 @@ def index():
     return render_template('index.html')
 
 @routes_bp.route('/cramer', methods=['GET', 'POST'])
-def cramer():
+def cramer_view():
     resultado = None
     error = None
     pasos = None
@@ -45,7 +46,7 @@ def cramer():
     return render_template('cramer.html', resultado=resultado, error=error, pasos=pasos)
 
 @routes_bp.route('/gauss_jordan', methods=['GET', 'POST'])
-def gaussJordan():
+def gauss_jordan_view():
     resultado = None
     error = None
     pasos = None
@@ -60,7 +61,7 @@ def gaussJordan():
     return render_template('gauss_jordan.html', resultado=resultado, error=error, pasos=pasos)
 
 @routes_bp.route('/matriz_inversa', methods=['GET', 'POST'])
-def matrizInversa():
+def matriz_inversa_view():
     resultado = None
     error = None
     pasos = None
@@ -74,3 +75,50 @@ def matrizInversa():
             error = str(e)
     return render_template('matriz_inversa.html', resultado=resultado, error=error, pasos=pasos)
 
+@routes_bp.route('/eliminacion_gaussiana', methods=['GET', 'POST'])
+def eliminacion_gaussiana_view():
+    matriz_triangular = None
+    soluciones = None
+    pasos = None
+    error = None
+    if request.method == 'POST':
+        try:
+            matriz = matriz_desde_formulario(request)
+            validar_matriz(matriz)
+            matriz_triangular, soluciones, pasos = eliminacion_gaussiana(matriz)
+
+        except Exception as e:
+            error  = str(e)
+    return render_template('eliminacion_gaussiana.html', matriz_triangular=matriz_triangular, soluciones=soluciones, pasos=pasos, error=error)
+
+@routes_bp.route('/traspuesta', methods=['GET', 'POST'])
+def traspuesta_view():
+    matriz_traspuesta = None
+    pasos = None
+    error = None
+    if request.method == 'POST':
+        try:
+            matriz = matriz_desde_formulario(request)
+            matriz_traspuesta, pasos = traspuesta(matriz)
+        except Exception as e:
+            error = str(e)
+    return render_template('traspuesta.html', matriz_traspuesta=matriz_traspuesta, pasos=pasos, error=error)
+
+@routes_bp.route('/determinante', methods=['GET', 'POST'])
+def determinante_view():
+    triangular = None
+    pasos_triangular = None
+    determinante = None
+    pasos_determinante = None
+    error = None
+    if request.method == 'POST':
+        try:
+            matriz = matriz_desde_formulario(request)
+            validar_matriz(matriz)
+            triangular, pasos_triangular = matriz_triangular(matriz)
+            determinante, pasos_determinante = calcular_determinante(matriz)
+        except Exception as e:
+            error = str(e)
+    return render_template('determinante.html', triangular=triangular,
+                           pasos_triangular=pasos_triangular, determinante=determinante,
+                           pasos_determinante=pasos_determinante, error=error)

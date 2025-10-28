@@ -1,31 +1,42 @@
-/* Estilos para pasos */
 .pasos {
-    margin: 38px auto 0 auto;
-    width: 95%;
-    background: #18363a;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(34, 46, 52, 0.13);
-    padding: 22px 32px;
-    border: 1px solid #20444a;
+    margin: 42px auto 0 auto;
+    width: 96%;
+    background: linear-gradient(120deg, #232946 0%, #393e6c 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(34, 46, 52, 0.13);
+    padding: 28px 38px;
+    border: 1.5px solid #A7E3C2;
+    animation: fadeInPasos 0.7s ease-in;
+}
+@keyframes fadeInPasos {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 .pasos li {
-    color: #DAF1DE;
+    color: #ffffff;
     text-align: center;
-    margin-bottom: 22px;
-    font-size: 1.12em;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #20444a;
+    margin-bottom: 26px;
+    font-size: 1.16em;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #393e6c;
     list-style-type: none;
+    background: #393e6c;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #23294622;
+    transition: background 0.2s, color 0.2s;
 }
 .pasos li:last-child {
     border-bottom: none;
 }
-.pasos strong {
-    color: #A7E3C2;
-    font-weight: bold;
-    font-size: 1.13em;
-    letter-spacing: 1px;
-    display: block;
-    margin-bottom: 8px;
+.pasos li:hover {
+    background: #314a6e;
+    color: #F4F4F6;
 }
-
+.pasos strong {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1.18em;
+    letter-spacing: 1.2px;
+    display: block;
+    margin-bottom: 10px;
+}

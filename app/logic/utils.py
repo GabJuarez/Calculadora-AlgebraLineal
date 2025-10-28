@@ -18,14 +18,6 @@ def validar_matriz(matriz):
             if not isinstance(elem, (int, float, Fraction)):
                 raise ValueError("Todos los elementos deben ser números o fracciones")
 
-def normalizar_ecuacion(ecuacion: str) -> str:
-    ecuacion = unicodedata.normalize("NFKC", ecuacion)
-    reemplazos = {"−": "-", "×": "*", "÷": "/", "⁺": "+", "⁻": "-", "∙": "*", "⋅": "*"}
-    ecuacion = re.sub(r"[\u200B\u200C\u200D\u2060]", "", ecuacion)
-    for viejo, nuevo in reemplazos.items():
-        ecuacion = ecuacion.replace(viejo, nuevo)
-    return ecuacion.strip()
-
 def mostrar_matriz(matriz):
     for fila in matriz:
         print("\t".join(str(num) for num in fila))
@@ -118,25 +110,6 @@ def crear_matriz_identidad(tamanio):
         identidad[i][i] = 1
     return identidad
 
-def matriz_triangular_superior(matriz):
-    n = len(matriz)
-    import copy
-    matriz = copy.deepcopy(matriz)
-    for i in range(n):
-        pivote = matriz[i][i]
-        if pivote == 0:
-            for k in range(i + 1, n):
-                if matriz[k][i] != 0:
-                    matriz[i], matriz[k] = matriz[k], matriz[i]
-                    pivote = matriz[i][i]
-                    break
-            else:
-                raise ValueError("La matriz no es invertible")
-        for k in range(i + 1, n):
-            factor = matriz[k][i] / pivote
-            for j in range(i, n):
-                matriz[k][j] -= factor * matriz[i][j]
-    return matriz
 
 # fuciones auxiliares para mostrar los pasos con subindices y fracciones
 SUBS = {str(i): chr(8320 + i) for i in range(10)}
@@ -153,14 +126,15 @@ def fraccion_str(frac):
             return f"{frac.numerator}/{frac.denominator}"
     return str(frac)
 
+def matriz_a_str(matriz):
+    """
+    Convierte una matriz (lista de listas) a formato string/fracción para mostrar en la web.
+    """
+    return [[fraccion_str(val) for val in fila] for fila in matriz]
+
 
 if __name__ == '__main__':
     matriz = [[2, 1, -1],
              [-3, -1, 2],
              [-2, 1, 2]]
 
-    print("Matriz original:")
-    mostrar_matriz(matriz)
-    triangular = matriz_triangular_superior(matriz)
-    print("Matriz triangular superior:")
-    mostrar_matriz(triangular)
