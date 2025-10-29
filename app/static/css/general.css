@@ -70,13 +70,14 @@ div {
     display: flex;
     min-height: 80vh;
     background: none;
-    box-shadow: none;
-    border-radius: 0;
+    box-shadow: 0 4px 32px #23294644;
+    border-radius: 18px;
     margin: 40px auto;
-    max-width: 1200px;
+    max-width: 1100px;
+    height: 80vh; /* Fuerza el mismo alto para ambos paneles */
 }
 .panel-lateral {
-    width: 260px;
+    width: 200px; /* Reducido para dar más espacio al panel principal */
     background: linear-gradient(120deg, #393e6c 0%, #232946 100%);
     border-radius: 18px 0 0 18px;
     box-shadow: 2px 0 16px #23294633;
@@ -85,15 +86,16 @@ div {
     flex-direction: column;
     align-items: center;
     min-height: 100%;
+    height: 100%; /* Igual al contenedor */
 }
 .panel-lista {
     list-style: none;
-    padding: 32px 0;
+    padding: 24px 0;
     margin: 0;
     width: 100%;
 }
 .panel-lista li {
-    margin-bottom: 18px;
+    margin-bottom: 12px;
 }
 .panel-lista li:last-child {
     margin-bottom: 0;
@@ -105,7 +107,7 @@ div {
     text-decoration: none;
     font-size: 1.08em;
     font-weight: 500;
-    padding: 14px 18px;
+    padding: 12px 14px;
     border-radius: 10px;
     box-shadow: 0 2px 8px #23294622;
     transition: background 0.2s, color 0.2s, transform 0.2s;
@@ -113,27 +115,41 @@ div {
     letter-spacing: 1px;
 }
 .panel-lista a:hover {
-    background: #A7E3C2;
+    background: #6EC6CA; /* Color suave y moderno */
     color: #232946;
     transform: scale(1.04);
-    border: 1.5px solid #A7E3C2;
+    border: 1.5px solid #6EC6CA;
 }
 .panel-principal {
     flex: 1;
     background: linear-gradient(120deg, #232946 0%, #393e6c 100%);
     border-radius: 0 18px 18px 0;
     box-shadow: -2px 0 16px #23294633;
-    padding: 48px 48px 48px 48px;
+    padding: 64px 64px 64px 64px;
     color: #F4F4F6;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    min-height: 100%; /* Cambiado para que siempre iguale el alto del panel lateral */
+    height: 100%; /* Igual al contenedor */
 }
 .titulo-principal {
     text-align: center;
     font-size: 2.3em;
     font-weight: 700;
-    color: #A7E3C2;
+    color: #6EC6CA;
     margin-bottom: 18px;
     text-shadow: 0 2px 12px #232946;
+    width: 100%;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
 }
 .caracteristicas {
     margin: 18px 0 28px 0;
@@ -145,11 +161,12 @@ div {
     line-height: 1.6;
 }
 .caracteristicas strong {
-    color: #A7E3C2;
+    color: #6EC6CA;
     font-weight: bold;
 }
 hr {
     border: none;
     border-top: 2px solid #393e6c;
     margin: 18px 0 28px 0;
+    width: 80%;
 }
