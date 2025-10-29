@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Sistemas de ecuaciones lineales{% endblock %}
+
+{% block body %}
+<div class="dashboard-container">
+    <aside class="panel-lateral">
+        <nav>
+            <ul class="panel-lista">
+                <li><a href="{{ url_for('routes_bp.gauss_jordan_view') }}">Método de Gauss-Jordan</a></li>
+                <li><a href="{{ url_for('routes_bp.eliminacion_gaussiana_view') }}">Eliminación Gaussiana</a></li>
+                <li><a href="{{ url_for('routes_bp.cramer_view') }}">Regla de Cramer</a></li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="panel-principal">
+        <h1 class="titulo-principal">Elige el método para resolver tu sistema</h1>
+        <hr>
+        <p>Selecciona uno de los métodos clásicos para resolver sistemas de ecuaciones lineales. Cada uno te mostrará el procedimiento paso a paso.</p>
+    </main>
+</div>
+{% endblock %}
+

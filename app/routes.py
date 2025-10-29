@@ -122,3 +122,11 @@ def determinante_view():
     return render_template('determinante.html', triangular=triangular,
                            pasos_triangular=pasos_triangular, determinante=determinante,
                            pasos_determinante=pasos_determinante, error=error)
+
+@routes_bp.route('/informacion')
+def informacion_view():
+    return render_template('informacion.html')
+
+@routes_bp.route('/sistemas')
+def sistemas_view():
+    return render_template('sistemas.html')
