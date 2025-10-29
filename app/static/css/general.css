@@ -130,14 +130,14 @@ div {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
     box-sizing: border-box;
-    min-height: 100%; /* Cambiado para que siempre iguale el alto del panel lateral */
-    height: 100%; /* Igual al contenedor */
+    min-height: 100vh; /* Asegura que el panel tenga al menos el alto de la ventana */
+    height: auto; /* Permite que crezca según el contenido */
 }
 .titulo-principal {
     text-align: center;
@@ -169,4 +169,125 @@ hr {
     border-top: 2px solid #393e6c;
     margin: 18px 0 28px 0;
     width: 80%;
+}
+
+/* Estilos para la sección de ventajas: tarjetas responsivas que respetan la paleta existente */
+.ventajas-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    width: 100%;
+    align-items: start;
+}
+
+.feature-card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+    border-left: 4px solid #6EC6CA; /* acento existente */
+    padding: 14px 16px;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    color: #F4F4F6;
+    line-height: 1.45;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+    min-height: 140px; /* altura minima para uniformidad */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.feature-card strong{
+    display: block;
+    color: #6EC6CA;
+    margin-bottom: 6px;
+    font-size: 1.02em;
+}
+
+.feature-card p{
+    margin: 0;
+    font-size: 0.98em;
+    color: #E8F6F5;
+}
+
+.feature-card:hover,
+.feature-card:focus-within{
+    transform: translateY(-6px);
+    box-shadow: 0 14px 34px rgba(0,0,0,0.26);
+}
+
+/* Contenedor general para ventajas: agrupa las tarjetas y el párrafo final dentro de un cuadro */
+.ventajas-container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: linear-gradient(180deg, rgba(37,50,83,0.28), rgba(37,50,83,0.18));
+    border: 1px solid rgba(110,198,202,0.12);
+    border-radius: 14px;
+    padding: 32px 28px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.22);
+    margin: 18px 0 28px 0;
+    box-sizing: border-box;
+    align-items: stretch;
+    align-self: stretch;
+    min-height: 420px; /* altura mínima para que el cuadro se vea proporcionado */
+    justify-content: center; /* centrar verticalmente el contenido */
+}
+
+/* Ajustes para que la lista interna no tenga padding extra */
+.ventajas-container .caracteristicas{
+    padding-left: 0;
+    margin: 0; /* eliminamos margin-bottom aquí para controlar el espacio con gap */
+    width: 100%;
+}
+
+/* Establecer comportamiento del grid para que las tarjetas ocupen columnas y no se apilen en una sola columna innecesariamente */
+.ventajas-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* columnas más anchas por defecto */
+    gap: 16px;
+    padding: 0;
+    margin: 0; /* controlamos separación con el gap del contenedor */
+    list-style: none;
+    width: 100%;
+    align-items: start;
+    align-self: stretch; /* asegurar que la rejilla ocupe todo el ancho dentro del contenedor */
+}
+
+/* Párrafo al final dentro del cuadro: ahora ocupa todo el ancho y luce como una tarjeta coherente */
+.ventajas-footer{
+    margin: 0;
+    padding: 16px 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+    border-radius: 10px;
+    color: #E8F6F5;
+    font-size: 1em;
+    line-height: 1.6;
+    border-left: 4px solid #6EC6CA; /* mismo acento que las tarjetas */
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+    text-align: left;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+}
+
+/* Asegurar coherencia entre espacios internos y la rejilla */
+.ventajas-container{ gap: 20px; padding: 22px; }
+.ventajas-grid{ gap: 18px; }
+
+@media (max-width: 900px){
+    /* en pantallas intermedias, permitir que las tarjetas sigan en 1-2 columnas */
+    .ventajas-grid{ grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    .ventajas-container{ min-height: 340px; padding: 22px 10px; }
+    .panel-principal{ padding: 32px 10px; }
+}
+
+@media (max-width: 560px){
+    .panel-principal{ padding: 18px 2px; min-height: 0; }
+    .ventajas-grid{ gap: 10px; grid-template-columns: 1fr; }
+    .feature-card{ padding: 12px; border-radius: 8px; }
+    .ventajas-container{ min-height: 0; padding: 12px 4px; }
+    .ventajas-footer{ padding: 12px; font-size: 0.97em; }
 }

@@ -52,4 +52,3 @@ Calculadora-AlgebraLineal/
 └── README.md            # Información del proyecto
 ```
 ---
-¿Tienes sugerencias o quieres contribuir? ¡Bienvenido!
