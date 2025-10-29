@@ -1,10 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}Información{% endblock %}
+
+{% block body %}
+<div class="dashboard-container">
+    <aside class="panel-lateral">
+        <nav>
+            <ul class="panel-lista">
+                <li><a href="{{ url_for('routes_bp.index') }}">Volver al menú principal</a></li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="panel-principal">
+        <h1 class="titulo-principal">Calculadora de Álgebra Lineal</h1>
+        <hr>
+        <p>
+            Bienvenido a una calculadora de álgebra lineal completa y fácil de usar. Resuelve operaciones con matrices y sistemas de ecuaciones de manera rápida, visual y confiable. Ideal para estudiantes, docentes y profesionales que buscan ahorrar tiempo y evitar errores en sus cálculos.
+        </p>
+        <h2>¿Qué puedes hacer aquí?</h2>
+        <ul class="caracteristicas">
+            <li><strong>Operaciones con matrices:</strong><br>
+                Multiplica, suma, resta, calcula determinantes, inversas, transpuestas de matrices de hasta 10x10.
+            </li>
+            <li><strong>Solución de sistemas:</strong><br>
+                Resuelve sistemas de ecuaciones lineales usando métodos clásicos como Gauss Jordan, eliminacion Gaussiana y la regla de Cramer, con procedimiento paso a paso.
+            </li>
+            <li><strong>Resultados claros y detallados:</strong><br>
+                Visualiza cada paso del procedimiento, revisa los resultados y comprende el proceso matemático detrás de cada operación.
+            </li>
+        </ul>
+        <h2>Ventajas de nuestra herramienta</h2>
+        <ul class="caracteristicas">
+            <li><strong>Evita errores:</strong><br>
+                El sistema verifica tus datos y realiza los cálculos automáticamente, asegurando precisión en cada resultado.
+            </li>
+            <li><strong>Aprende mientras resuelves:</strong><br>
+                Cada método muestra el desarrollo completo, ideal para estudiar y entender el álgebra lineal.
+            </li>
+            <li><strong>Acceso rápido y gratuito:</strong><br>
+                No necesitas instalar nada ni registrarte. Accede desde cualquier dispositivo y comienza a calcular al instante.
+            </li>
+        </ul>
+        <p>
+            Explora los módulos en el panel lateral y descubre todo lo que puedes lograr con nuestra calculadora. ¡Haz que el álgebra lineal sea sencillo y visual!
+        </p>
+    </main>
+</div>
+{% endblock %}

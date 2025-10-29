@@ -7,52 +7,22 @@
     <aside class="panel-lateral">
         <nav>
             <ul class="panel-lista">
-                <li><a href="{{ url_for('routes_bp.gauss_jordan_view') }}">Método de Gauss-Jordan</a></li>
-                <li><a href="{{ url_for('routes_bp.eliminacion_gaussiana_view') }}">Eliminación Gaussiana</a></li>
-                <li><a href="{{ url_for('routes_bp.cramer_view') }}">Regla de Cramer</a></li>
+                <li><a href="{{ url_for('routes_bp.sistemas_view') }}">Sistemas de ecuaciones lineales</a></li>
                 <li><a href="{{ url_for('routes_bp.determinante_view') }}">Determinante de una matriz</a></li>
                 <li><a href="{{ url_for('routes_bp.matriz_inversa_view') }}">Matriz inversa</a></li>
                 <li><a href="{{ url_for('routes_bp.traspuesta_view') }}">Matriz traspuesta</a></li>
-                <li><a href="#">Suma/Resta de matrices</a></li>
-                <li><a href="#">Operaciones con escalares</a></li>
-                <li><a href="#">Multiplicación de matrices</a></li>
+                <li><a href="#">Operaciones con matrices</a></li>
                 <li><a href="#">Independencia lineal de vectores</a></li>
+                <li><a href="{{ url_for('routes_bp.informacion_view') }}">Información</a></li>
             </ul>
         </nav>
     </aside>
     <main class="panel-principal">
-        <h1 class="titulo-principal">Calculadora de Álgebra Lineal</h1>
+        <h1 class="titulo-principal">Selecciona una opción</h1>
         <hr>
-        <p>
-            Bienvenido a una calculadora de álgebra lineal completa y fácil de usar. Resuelve operaciones con matrices y sistemas de ecuaciones de manera rápida, visual y confiable. Ideal para estudiantes, docentes y profesionales que buscan ahorrar tiempo y evitar errores en sus cálculos.
-        </p>
-        <h2>¿Qué puedes hacer aquí?</h2>
-        <ul class="caracteristicas">
-            <li><strong>Operaciones con matrices:</strong><br>
-                Multiplica, suma, resta, calcula determinantes, inversas, transpuestas de matrices de hasta 10x10.
-            </li>
-            <li><strong>Solución de sistemas:</strong><br>
-                Resuelve sistemas de ecuaciones lineales usando métodos clásicos como Gauss Jordan, eliminacion Gaussiana y la regla de Cramer, con procedimiento paso a paso.
-            </li>
-            <li><strong>Resultados claros y detallados:</strong><br>
-                Visualiza cada paso del procedimiento, revisa los resultados y comprende el proceso matemático detrás de cada operación.
-            </li>
-        </ul>
-        <h2>Ventajas de nuestra herramienta</h2>
-        <ul class="caracteristicas">
-            <li><strong>Evita errores:</strong><br>
-                El sistema verifica tus datos y realiza los cálculos automáticamente, asegurando precisión en cada resultado.
-            </li>
-            <li><strong>Aprende mientras resuelves:</strong><br>
-                Cada método muestra el desarrollo completo, ideal para estudiar y entender el álgebra lineal.
-            </li>
-            <li><strong>Acceso rápido y gratuito:</strong><br>
-                No necesitas instalar nada ni registrarte. Accede desde cualquier dispositivo y comienza a calcular al instante.
-            </li>
-        </ul>
-        <p>
-            Explora los módulos en el panel lateral y descubre todo lo que puedes lograr con nuestra calculadora. ¡Haz que el álgebra lineal sea sencillo y visual!
-        </p>
+        <p>Usa el panel lateral para navegar entre los distintos métodos para resolver
+            ecuaciones lineales y herramientas que permiter realizar distintas operaciones
+            con matrices y vectores.</p>
     </main>
 </div>
 {% endblock %}
