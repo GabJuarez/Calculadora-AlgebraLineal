@@ -132,9 +132,80 @@ def matriz_a_str(matriz):
     """
     return [[fraccion_str(val) for val in fila] for fila in matriz]
 
+def sumar_matrices_pasos(A, B):
+    """
+    Suma dos matrices mostrando el paso a paso y la matriz en cada paso con notación matemática unicode.
+    """
+    filas_A = len(A)
+    columnas_A = len(A[0])
+    resultado = [[0 for _ in range(columnas_A)] for _ in range(filas_A)]
+    pasos = []
+    from fractions import Fraction
+    for i in range(filas_A):
+        fila_paso = []
+        for j in range(columnas_A):
+            suma = A[i][j] + B[i][j]
+            resultado[i][j] = suma
+            a_str = fraccion_str(A[i][j])
+            b_str = fraccion_str(B[i][j])
+            suma_str = fraccion_str(suma)
+            fila_paso.append(f"F{subindice(i+1)}[{subindice(j+1)}] = {a_str} + {b_str} = {suma_str}")
+        pasos.append(f"<strong>Operación en fila {subindice(i+1)}</strong><br>" + '<br>'.join(fila_paso))
+        pasos.append(f"<span class='matriz-label-final'>Matriz parcial tras sumar fila {subindice(i+1)}</span>:{matriz_a_str(resultado)}")
+    return resultado, pasos
+
+def restar_matrices_pasos(A, B):
+    """
+    Resta dos matrices mostrando el paso a paso y la matriz en cada paso con notación matemática unicode.
+    """
+    filas_A = len(A)
+    columnas_A = len(A[0])
+    resultado = [[0 for _ in range(columnas_A)] for _ in range(filas_A)]
+    pasos = []
+    from fractions import Fraction
+    for i in range(filas_A):
+        fila_paso = []
+        for j in range(columnas_A):
+            resta = A[i][j] - B[i][j]
+            resultado[i][j] = resta
+            a_str = fraccion_str(A[i][j])
+            b_str = fraccion_str(B[i][j])
+            resta_str = fraccion_str(resta)
+            fila_paso.append(f"F{subindice(i+1)}[{subindice(j+1)}] = {a_str} - {b_str} = {resta_str}")
+        pasos.append(f"<strong>Operación en fila {subindice(i+1)}</strong><br>" + '<br>'.join(fila_paso))
+        pasos.append(f"<span class='matriz-label-final'>Matriz parcial tras restar fila {subindice(i+1)}</span>:{matriz_a_str(resultado)}")
+    return resultado, pasos
+
+def multiplicar_matrices_pasos(A, B):
+    """
+    Multiplica dos matrices mostrando el paso a paso y la matriz en cada paso con notación matemática unicode.
+    """
+    filas_A = len(A)
+    columnas_A = len(A[0])
+    filas_B = len(B)
+    columnas_B = len(B[0])
+    resultado = [[0 for _ in range(columnas_B)] for _ in range(filas_A)]
+    pasos = []
+    from fractions import Fraction
+    for i in range(filas_A):
+        fila_paso = []
+        for j in range(columnas_B):
+            suma = 0
+            detalle = []
+            for k in range(columnas_A):
+                a_str = fraccion_str(A[i][k])
+                b_str = fraccion_str(B[k][j])
+                detalle.append(f"{a_str}·{b_str}")
+                suma += A[i][k] * B[k][j]
+            suma_str = fraccion_str(suma)
+            resultado[i][j] = suma
+            fila_paso.append(f"F{subindice(i+1)}[{subindice(j+1)}] = " + ' + '.join(detalle) + f" = {suma_str}")
+        pasos.append(f"<strong>Operación en fila {subindice(i+1)}</strong><br>" + '<br>'.join(fila_paso))
+        pasos.append(f"<span class='matriz-label-final'>Matriz parcial tras multiplicar fila {subindice(i+1)}</span>:{matriz_a_str(resultado)}")
+    return resultado, pasos
+
 
 if __name__ == '__main__':
     matriz = [[2, 1, -1],
              [-3, -1, 2],
              [-2, 1, 2]]
-
