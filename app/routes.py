@@ -130,3 +130,20 @@ def informacion_view():
 @routes_bp.route('/sistemas')
 def sistemas_view():
     return render_template('sistemas.html')
+
+@routes_bp.route('/multiplicacion_matrices', methods=['GET', 'POST'])
+def multiplicacion_matrices_view():
+    resultado = None
+    error = None
+    if request.method == 'POST':
+        try:
+            from app.logic.multiplicacion_matrices import multiplicar_y_formatear
+            a_texto = request.form.get('matriz_a', '')
+            b_texto = request.form.get('matriz_b', '')
+            resultado = multiplicar_y_formatear(a_texto, b_texto)
+        except Exception as e:
+            error = str(e)
+    return render_template('multiplicacion_matrices.html', resultado=resultado, error=error)
+
+
+

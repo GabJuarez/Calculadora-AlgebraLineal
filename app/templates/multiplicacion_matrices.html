@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Multiplicación de Matrices</h1>
+    <form id="matrix-form">
+        <div class="form-group">
+            <label for="matrix-a">Matriz A:</label>
+            <textarea id="matrix-a" rows="4" cols="30" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="matrix-b">Matriz B:</label>
+            <textarea id="matrix-b" rows="4" cols="30" class="form-control"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Multiplicar</button>
+    </form>
+    <div id="result" class="result"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/mult_matrices.js') }}"></script>
+{% endblock %}
