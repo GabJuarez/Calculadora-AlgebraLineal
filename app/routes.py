@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request
 from app import (gauss_jordan, resolver_cramer, gauss_jordan_pasos,
                  eliminacion_gaussiana, matriz_desde_formulario, traspuesta,
                  matriz_triangular,calcular_determinante)
+from app.logic.operaciones_matrices import operar_matrices
 import re
 
 routes_bp = Blueprint('routes_bp', __name__)
@@ -131,19 +132,40 @@ def informacion_view():
 def sistemas_view():
     return render_template('sistemas.html')
 
-@routes_bp.route('/multiplicacion_matrices', methods=['GET', 'POST'])
-def multiplicacion_matrices_view():
+@routes_bp.route('/operaciones_matrices', methods=['GET', 'POST'])
+def operaciones_matrices_view():
     resultado = None
+    pasos = []
     error = None
     if request.method == 'POST':
         try:
-            from app.logic.multiplicacion_matrices import multiplicar_y_formatear
-            a_texto = request.form.get('matriz_a', '')
-            b_texto = request.form.get('matriz_b', '')
-            resultado = multiplicar_y_formatear(a_texto, b_texto)
+            # Leer datos del formulario
+            filas_a = int(request.form['filas_a'])
+            columnas_a = int(request.form['columnas_a'])
+            filas_b = int(request.form['filas_b'])
+            columnas_b = int(request.form['columnas_b'])
+            escalar_a = request.form.get('escalar_a', None)
+            escalar_b = request.form.get('escalar_b', None)
+            operacion = request.form.get('operacion', 'suma')
+            # Leer matrices
+            def leer_matriz(prefix, filas, columnas):
+                matriz = []
+                for i in range(filas):
+                    fila = []
+                    for j in range(columnas):
+                        val = request.form.get(f"{prefix}_{i}_{j}", '0')
+                        try:
+                            fila.append(float(val))
+                        except Exception:
+                            fila.append(0)
+                    matriz.append(fila)
+                return matriz
+            matriz_a = leer_matriz('matriz_a', filas_a, columnas_a)
+            matriz_b = leer_matriz('matriz_b', filas_b, columnas_b)
+            # Ejecutar operación
+            res = operar_matrices(matriz_a, matriz_b, escalar_a, escalar_b, operacion)
+            resultado = res['resultado']
+            pasos = res['pasos']
         except Exception as e:
             error = str(e)
-    return render_template('_multiplicacion_matrices.html', resultado=resultado, error=error)
-
-
-
+    return render_template('operaciones_matrices.html', resultado=resultado, pasos=pasos, error=error)
