@@ -143,7 +143,7 @@ def multiplicacion_matrices_view():
             resultado = multiplicar_y_formatear(a_texto, b_texto)
         except Exception as e:
             error = str(e)
-    return render_template('multiplicacion_matrices.html', resultado=resultado, error=error)
+    return render_template('_multiplicacion_matrices.html', resultado=resultado, error=error)
 
 
 
