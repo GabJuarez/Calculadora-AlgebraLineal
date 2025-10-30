@@ -7,16 +7,29 @@
     padding: 28px 38px;
     border: 1.5px solid #A7E3C2;
     animation: fadeInPasos 0.7s ease-in;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 @keyframes fadeInPasos {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+.pasos ul {
+    padding-left: 0;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 .pasos li {
     color: #ffffff;
     text-align: center;
     margin-bottom: 26px;
-    font-size: 1.16em;
+    font-size: 1.18em;
+    font-weight: bold;
     padding-bottom: 12px;
     border-bottom: 1px solid #393e6c;
     list-style-type: none;
@@ -24,6 +37,13 @@
     border-radius: 8px;
     box-shadow: 0 2px 8px #23294622;
     transition: background 0.2s, color 0.2s;
+    padding-top: 12px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .pasos li:last-child {
     border-bottom: none;
@@ -33,10 +53,37 @@
     color: #F4F4F6;
 }
 .pasos strong {
-    color: #ffffff;
+    color: #A7E3C2;
     font-weight: bold;
-    font-size: 1.18em;
+    font-size: 1.22em;
     letter-spacing: 1.2px;
     display: block;
     margin-bottom: 10px;
+}
+.matriz-label-final {
+    text-align: center;
+    font-size: 1.15em;
+    font-weight: 600;
+    color: #A7E3C2;
+    margin: 18px 0 8px 0;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px #232946;
+}
+.titulo-pasos {
+    color: #A7E3C2;
+    font-size: 1.3em;
+    font-weight: 700;
+    margin-bottom: 18px;
+    text-align: center;
+    letter-spacing: 1.2px;
+}
+.matriz_resultado td {
+    border: 1px solid #A7E3C2;
+    padding: 12px 22px;
+    text-align: center;
+    color: #F4F4F6;
+    background: #393e6c;
+    font-size: 1.18em;
+    font-weight: bold;
+    transition: background 0.2s;
 }

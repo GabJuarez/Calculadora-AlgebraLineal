@@ -136,3 +136,112 @@
     box-shadow: 0 12px 36px rgba(167, 227, 194, 0.18);
     border-color: #A7E3C2;
 }
+/* Estilos para operaciones entre matrices */
+.form_operacion_matrices {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: stretch;
+    margin-bottom: 2rem;
+}
+.matriz-input-panel {
+    background: #232946; /* Fondo oscuro que combina con la app */
+    border-radius: 18px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 2px 12px rgba(34, 46, 52, 0.13);
+    min-width: 260px;
+    color: #A7E3C2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0;
+}
+.operacion-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 0.5rem;
+    background: #232946;
+    border-radius: 18px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 2px 12px rgba(34, 46, 52, 0.13);
+    color: #A7E3C2;
+    min-width: 220px;
+    height: 100%;
+}
+.botones-panel {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+}
+.input_matriz {
+    width: 50px;
+    padding: 4px;
+    border-radius: 6px;
+    border: 1px solid #A7E3C2;
+    text-align: center;
+    font-size: 1rem;
+    background: #393e6c;
+    color: #A7E3C2;
+    box-shadow: 0 1px 4px rgba(34, 46, 52, 0.09);
+}
+.matriz-input-panel h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    color: #A7E3C2;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+.matriz-input-panel label {
+    margin-right: 0.5rem;
+    font-weight: 500;
+    color: #A7E3C2;
+}
+.matriz-input-panel input[type="number"] {
+    margin-bottom: 0.5rem;
+}
+.operacion-panel label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #A7E3C2;
+}
+.operacion-panel select {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #A7E3C2;
+    font-size: 1rem;
+    background: #393e6c;
+    color: #A7E3C2;
+}
+.boton_volver, .boton_calcular, .limpiar_matriz {
+    background: #2d4059;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+.boton_volver:hover, .boton_calcular:hover, .limpiar_matriz:hover {
+    background: #3a506b;
+}
+.form_operacion_matrices > * {
+    flex: 1 1 0;
+    min-height: 100%;
+}
+@media (max-width: 1100px) {
+    .form_operacion_matrices {
+        flex-direction: column;
+        align-items: center;
+    }
+    .matriz-input-panel, .operacion-panel {
+        min-width: 220px;
+        width: 90vw;
+        margin-bottom: 1.5rem;
+    }
+}
