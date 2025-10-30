@@ -41,5 +41,54 @@
         <button type="reset" class="limpiar_matriz" onclick="limpiarMatrices()">Limpiar</button>
     </div>
 </form>
+
+{% if error %}
+    <div class="mensaje-error">{{ error }}</div>
+{% endif %}
+
+{% if pasos %}
+    <div class="pasos">
+        <h3 class="titulo-pasos">Pasos realizados</h3>
+        <ul>
+            {% for paso in pasos %}
+                <li>
+                    {% if 'Matriz parcial' in paso or 'Matriz A tras' in paso or 'Matriz B tras' in paso %}
+                        <div class="matriz-label-final">{{ paso.split(':')[0]|safe }}</div>
+                        <table class="matriz_resultado">
+                            {% set matriz = paso.split(':', 1)[1].replace("'", '') %}
+                            {% set matriz = matriz.replace('[[', '[').replace(']]', ']') %}
+                            {% set matriz = matriz.replace('], [', ']|[') %}
+                            {% for fila in matriz.split('|') %}
+                                <tr>
+                                    {% for val in fila.replace('[','').replace(']','').split(',') %}
+                                        <td>{{ val.strip().replace('"','') }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                        {{ paso|safe }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+{% if resultado %}
+    <div class="panel-resultado">
+        <h3 class="titulo-resultado">Matriz resultado</h3>
+        <table class="matriz_resultado">
+            {% for fila in resultado %}
+                <tr>
+                    {% for val in fila %}
+                        <td>{{ val }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}
+
 <script src="{{ url_for('static', filename='js/operaciones_matrices.js') }}"></script>
 {% endblock %}
