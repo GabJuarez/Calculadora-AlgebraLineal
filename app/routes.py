@@ -132,6 +132,27 @@ def informacion_view():
 def sistemas_view():
     return render_template('sistemas.html')
 
+@routes_bp.route('/independencia_lineal', methods=['GET', 'POST'])
+def independencia_lineal():
+    resultado = None
+    pasos = []
+    error = None
+    if request.method == 'POST':
+        try:
+            matriz = matriz_desde_formulario(request)
+            validar_matriz(matriz)
+            from app.logic.independencia_lineal import comprobar_independencia_lineal
+            matriz_reducida_str, resultado_str, pasos_str = comprobar_independencia_lineal(matriz)
+            resultado = {
+                'matriz_reducida': matriz_reducida_str,
+                'resultado': resultado_str
+            }
+            pasos = pasos_str
+        except Exception as e:
+            error = str(e)
+        pass
+    return render_template('independencia_lineal.html', resultado=resultado, pasos=pasos, error=error)
+
 @routes_bp.route('/operaciones_matrices', methods=['GET', 'POST'])
 def operaciones_matrices_view():
     resultado = None
