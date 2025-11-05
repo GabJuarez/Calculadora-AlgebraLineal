@@ -89,8 +89,24 @@
 .resultado_texto {
     color: #e0e6f6;
     text-align: center;
-    font-size: 1.15rem;
-    margin-bottom: 8px;
+    font-size: 1.18rem;
+    margin: 12px auto 8px auto;
+    padding: 10px 18px;
+    background: linear-gradient(90deg, #232946 60%, #393e6c 100%);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.10);
+    font-weight: 600;
+    letter-spacing: 1px;
+    border: 1.5px solid #2d3a5a;
+    transition: background 0.2s, color 0.2s;
+    max-width: 420px;
+    width: fit-content;
+    min-width: 180px;
+    display: block;
+}
+.resultado_texto:hover {
+    background: #334155;
+    color: #6ee7b7;
 }
 .tabla_titulo.centrado {
     text-align: center;
@@ -144,4 +160,3 @@
     font-weight: 600;
     font-size: 1.1rem;
 }
-
