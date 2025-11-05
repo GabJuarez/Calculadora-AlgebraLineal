@@ -1,10 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}Bisección{% endblock %}
+
+{% block body %}
+<h1 class="titulo_matriz">Método de Bisección</h1>
+<form method="post" action="{{ url_for('routes_bp.biseccion_view') }}" class="formulario_biseccion">
+    <div class="formulario_biseccion_campos">
+        <div class="campo_biseccion">
+            <label for="funcion">f(x):</label>
+            <input type="text" id="funcion" name="funcion" value="{{ funcion|default('') }}" required class="input_biseccion">
+        </div>
+        <div class="campo_biseccion">
+            <label for="limite_inferior">Límite Inferior:</label>
+            <input type="number" id="limite_inferior" name="limite_inferior" value="{{ limite_inferior|default('') }}" required class="input_biseccion">
+        </div>
+        <div class="campo_biseccion">
+            <label for="limite_superior">Límite Superior:</label>
+            <input type="number" id="limite_superior" name="limite_superior" value="{{ limite_superior|default('') }}" required class="input_biseccion">
+        </div>
+    </div>
+    <div class="botones_biseccion">
+        <button type="submit" class="btn btn-primary boton_calcular">Calcular</button>
+        <button type="button" class="boton_volver" onclick="window.location.href='/'">Página Principal</button>
+    </div>
+</form>
+
+{% if resultado %}
+    <h2 class="resultado_titulo">Resultado</h2>
+    <p class="resultado_texto">Raíz aproximada: {{ resultado.raiz }}</p>
+    <p class="resultado_texto">Iteraciones: {{ resultado.iteraciones }}</p>
+    <h3 class="tabla_titulo centrado">Tabla de pasos:</h3>
+    <div class="tabla-resultados estilizada">{{ resultado.tabla|safe }}</div>
+{% endif %}
+
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+
+{% endblock %}
