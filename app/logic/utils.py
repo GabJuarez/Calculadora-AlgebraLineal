@@ -205,6 +205,31 @@ def multiplicar_matrices_pasos(A, B):
     return resultado, pasos
 
 
+def transformar_sintaxis(expr: str) -> str:
+    """
+    Transforma una expresión de entrada del usuario a sintaxis válida de Python.
+    - '^' -> '**'
+    - 'sen' -> 'sin', 'ln' -> 'log'
+    - inserta multiplicación implícita: '2x' -> '2*x', ')x' -> ')*x'
+
+    Se intenta reutilizar `app.logic.utils.transformar_sintaxis` si está disponible.
+    """
+    s = expr.strip()
+    # reemplazos simples
+    s = s.replace("^", "**")
+    # reemplazos de funciones/abreviaturas en forma sensible a mayúsculas
+    replacements = {
+        r"\bsen(?=\s*\()": "sin",
+        r"\bsenh(?=\s*\()": "sinh",
+        r"\bln(?=\s*\()": "log",
+        # cos, tan, exp, sqrt, etc. se dejan como están (se asume que el usuario usa cos/tan)
+    }
+    for pat, repl in replacements.items():
+        s = re.sub(pat, repl, s, flags=re.IGNORECASE)
+    # insertar multiplicación entre número/u paréntesis cerrado y variable/función abierta
+    s = re.sub(r"(\d|\))\s*(?=[A-Za-z\(])", r"\1*", s)
+    return s
+
 if __name__ == '__main__':
     matriz = [[2, 1, -1],
              [-3, -1, 2],
