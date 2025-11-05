@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 from app import (gauss_jordan, resolver_cramer, gauss_jordan_pasos,
                  eliminacion_gaussiana, matriz_desde_formulario, traspuesta,
-                 matriz_triangular,calcular_determinante)
+                 matriz_triangular,calcular_determinante, biseccion)
 from app.logic.operaciones_matrices import operar_matrices
 import re
 
@@ -190,3 +190,19 @@ def operaciones_matrices_view():
         except Exception as e:
             error = str(e)
     return render_template('operaciones_matrices.html', resultado=resultado, pasos=pasos, error=error)
+
+@routes_bp.route('/biseccion', methods=['GET', 'POST'])
+def biseccion_view():
+    resultado = None
+    error = None
+    pasos = None
+    if request.method == 'POST':
+        try:
+            funcion = request.form['funcion']
+            a = float(request.form['limite_inferior'])
+            b = float(request.form['limite_superior'])
+            raiz, tabla, iteraciones = biseccion(funcion, (a, b))
+            resultado = {'raiz': raiz, 'tabla': tabla, 'iteraciones': iteraciones}
+        except Exception as e:
+            error = str(e)
+    return render_template('biseccion.html', resultado=resultado, error=error, pasos=pasos)
