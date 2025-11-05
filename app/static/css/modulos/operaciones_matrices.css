@@ -1,0 +1,23 @@
+/* Estilos específicos para Operaciones con Matrices */
+/* Variables globales de colores, fuentes, etc. */
+:root {
+    --color-principal: #181c2f;
+    --color-secundario: #232a44;
+    --color-acento: #6ee7b7;
+    --color-acento2: #a7f3d0;
+    --color-panel: #101225;
+    --color-panel-oscuro: #0a0a1e;
+    --color-borde: #2d3a5a;
+    --color-hover: #334155;
+    --color-texto: #e0e6f6;
+    --color-titulo: #6ee7b7;
+    --color-error: #f87171;
+    --color-boton: #2d3a5a;
+    --color-boton-hover: #3b4a6b;
+    --color-boton-texto: #e0e6f6;
+    --color-tabla-header: #2d3a5a;
+    --color-tabla-header-texto: #6ee7b7;
+    --color-tabla-par: #232a44;
+    --color-tabla-hover: #334155;
+}
+

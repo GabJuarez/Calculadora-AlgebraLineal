@@ -1,0 +1,12 @@
+/* Estilos para matrices */
+.matriz, .matriz-resultado {
+    display: inline-block;
+    margin: 8px 0;
+    padding: 8px 12px;
+    background: var(--color-panel-oscuro);
+    border-radius: 8px;
+    color: var(--color-acento2);
+    font-size: 1.1rem;
+    font-family: 'Fira Mono', 'Consolas', monospace;
+}
+
