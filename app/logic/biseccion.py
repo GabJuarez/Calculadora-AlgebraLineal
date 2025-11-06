@@ -1,10 +1,10 @@
 import ast
 import math
 from typing import Any, Tuple
-from .utils import transformar_sintaxis
+from .utils import transformar_sintaxis, parse_input_number
 from tabulate import tabulate
 
-# nombres de math permitidos para que no se pueda acceder a ningun buildin peligroso
+# nombres de math permitidos para que no se pueda acceder a ningun builtin peligroso
 _NOMBRES_MATH = {name for name in dir(math) if not name.startswith("_")}
 _NOMBRES_PERMITIDOS = _NOMBRES_MATH | {"x"}
 
@@ -51,7 +51,7 @@ def _validar_nodo(node: ast.AST) -> None:
     elif isinstance(node, ast.Num):  # compatibilidad
         return
     else:
-        raise ValueError(f"Elemento de expresión {type(node).__name__} no permitido")
+        raise ValueError(f"Elemento de expresión {type(node).__name__} no permitido. No se permiten conjuntos (llaves) ni expresiones con llaves en la función. Por favor, ingrese una expresión matemática válida.")
 
 
 def evaluar(funcion: str, x: Any) -> float:
@@ -71,14 +71,14 @@ def evaluar(funcion: str, x: Any) -> float:
     return float(eval(compile(tree, filename="<ast>", mode="eval"), {"__builtins__": None}, env))
 
 
-def biseccion(funcion: str, intervalo: Tuple[float, float], error : float = 0.0001, max_iter: int = 100):
+def biseccion(funcion: str, intervalo: Tuple[str, str], error : float = 0.0001, max_iter: int = 100):
     """
-    Parametros: funcion: str, intervalo: tuple[float, float], error: float
+    Parametros: funcion: str, intervalo: tuple[str, str], error: float
     Devuelve la aproximacion de la raiz usando el metodo de biseccion
     con la funcion dada en el intervalo dado hasta el error dado
     0.0001 por defecto
+    El intervalo puede ser strings como "1/2", "2.5", "ln(2)", etc.
     """
-
     arbol_funcion = transformar_sintaxis(funcion)
     arbol_funcion = ast.parse(arbol_funcion, mode="eval")
     try:
@@ -88,7 +88,9 @@ def biseccion(funcion: str, intervalo: Tuple[float, float], error : float = 0.00
 
     pasos = [["Iteración", "a", "b", "c", "f(a)", "f(b)", "f(c)"]]
     iteracion = 0
-    a, b = intervalo
+    # Usar parse_input_number para convertir los extremos del intervalo
+    a = parse_input_number(intervalo[0])
+    b = parse_input_number(intervalo[1])
     evaluacion_a = evaluar(funcion, a)
     evaluacion_b = evaluar(funcion, b)
     if evaluacion_a * evaluacion_b > 0:
@@ -96,7 +98,7 @@ def biseccion(funcion: str, intervalo: Tuple[float, float], error : float = 0.00
                          " intervalos, los resultados deben tener distinto signo")
     c = (a + b) / 2.0
     evaluacion_c = evaluar(funcion, c)
-    while abs(evaluacion_c) > error or iteracion == max_iter:
+    while abs(evaluacion_c) > error and iteracion < max_iter:
         if evaluacion_a * evaluacion_c > 0:
             a = c
             evaluacion_a = evaluar(funcion, a)
@@ -124,5 +126,3 @@ if __name__ == "__main__":
     print(f"Iteraciones: {iteraciones}")
     print("Tabla de pasos:")
     print(tabla)
-
-

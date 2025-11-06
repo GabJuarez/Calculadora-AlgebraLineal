@@ -230,6 +230,38 @@ def transformar_sintaxis(expr: str) -> str:
     s = re.sub(r"(\d|\))\s*(?=[A-Za-z\(])", r"\1*", s)
     return s
 
+def parse_input_number(value) -> float:
+    """
+    Convierte un string en un número float, aceptando fracciones, decimales y expresiones matemáticas.
+    Si recibe un float/int, lo retorna directamente.
+    Ejemplos: "1/2", "2.5", "ln(2)", "sqrt(2)", "3/4 + 1/2"
+    """
+    import math
+    import ast
+    from fractions import Fraction
+    if isinstance(value, (float, int)):
+        return float(value)
+    value = value.strip().replace('^', '**')
+    value = re.sub(r"\\bln\\b", "log", value)
+    allowed_names = {name: getattr(math, name) for name in dir(math) if not name.startswith("_")}
+    allowed_names["Fraction"] = Fraction
+    if re.match(r"^\\d+\\s*/\\s*\\d+$", value):
+        return float(Fraction(value))
+    try:
+        return float(value)
+    except ValueError:
+        pass
+    try:
+        tree = ast.parse(value, mode="eval")
+        for node in ast.walk(tree):
+            if not (isinstance(node, (ast.Expression, ast.BinOp, ast.UnaryOp, ast.Call, ast.Name, ast.Load, ast.Constant, ast.Num))):
+                raise ValueError("Expresión no permitida")
+            if isinstance(node, ast.Name) and node.id not in allowed_names:
+                raise ValueError(f"Función o nombre '{node.id}' no permitido")
+        return float(eval(compile(tree, filename="<ast>", mode="eval"), {"__builtins__": None}, allowed_names))
+    except Exception:
+        raise ValueError(f"No se pudo convertir '{value}' a número")
+
 if __name__ == '__main__':
     matriz = [[2, 1, -1],
              [-3, -1, 2],
