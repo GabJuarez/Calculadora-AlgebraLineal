@@ -1,9 +1,22 @@
+html, body {
+    height: 100%;
+}
 body {
-    background: linear-gradient(120deg, #232946 0%, #1a1a2e 100%);
+    background: linear-gradient(120deg, #232946 0%, #1a1a2e 100%) fixed;
+    background-color: #101216; /* fallback solid color to avoid white gaps while gradient paints */
     font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
     color: #F4F4F6;
     min-height: 100vh;
     margin: 0;
+}
+
+/* reduce default top margin for headings inside the biseccion page to avoid a big band */
+.titulo_matriz { margin-top: 14px; }
+
+.center-flex{
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
 h1, h2 {
@@ -27,11 +40,6 @@ label {
     margin: 0 10px;
     font-size: 1.08em;
     font-weight: 500;
-}
-div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 .menu-principal {
     display: flex;

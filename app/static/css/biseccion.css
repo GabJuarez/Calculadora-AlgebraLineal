@@ -79,6 +79,20 @@
     color: #a7f3d0;
 }
 
+/* Styled preview button */
+.boton-preview{
+    width: 200px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(110,198,202,0.12);
+    background: linear-gradient(90deg, #2a3556 0%, #3b4a6b 100%);
+    color: #e0f7f1;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(20,30,60,0.25);
+}
+.boton-preview:hover{ background: linear-gradient(90deg, #3b4a6b 0%, #2a3556 100%); transform: translateY(-2px); }
+
 .resultado_titulo {
     color: #6ee7b7;
     text-align: center;
@@ -159,4 +173,92 @@
     text-align: center;
     font-weight: 600;
     font-size: 1.1rem;
+}
+
+/* Preview styling for biseccion */
+.biseccion-preview{
+    width: 100%;
+    height: 360px;
+    border-radius: 8px;
+    border: 1px solid rgba(58,65,87,0.6);
+    background: linear-gradient(180deg, rgba(25,28,44,0.85), rgba(30,34,50,0.75));
+    padding: 6px;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+    z-index: 5;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+/* Ensure Plotly/Plot elements are transparent inside preview */
+.biseccion-preview,
+.biseccion-preview * ,
+.biseccion-preview .js-plotly-plot,
+.biseccion-preview .js-plotly-plot > div,
+.biseccion-preview .plotly,
+.biseccion-preview svg {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Also remove any margins so the plot uses full container */
+.biseccion-preview .plotly, .biseccion-preview .js-plotly-plot {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Reduce top margin of the preview container on small screens */
+@media (max-width: 640px){
+    .biseccion-preview{ height: 260px; }
+}
+
+/* Force Plotly's modebar and internal elements to match dark theme or be transparent */
+.biseccion-preview .modebar-container,
+.biseccion-preview .modebar,
+.biseccion-preview .modebar-group {
+    background: rgba(25,28,44,0.85) !important;
+    border: 1px solid rgba(58,65,87,0.6) !important;
+    color: #e6eef3 !important;
+}
+.biseccion-preview .modebar-btn {
+    background: rgba(40,44,65,0.6) !important;
+    color: #e6eef3 !important;
+    border-radius: 4px !important;
+}
+.biseccion-preview .modebar-btn:hover {
+    background: rgba(60,65,95,0.9) !important;
+}
+
+/* Ensure SVG layers are transparent */
+.biseccion-preview svg, .biseccion-preview .main-svg {
+    background: transparent !important;
+}
+
+/* Hide export credit/links that may add white boxes */
+.biseccion-preview .plotly .legendlayer .legend, .biseccion-preview .modebar,.biseccion-preview .plotly .credits {
+    background: transparent !important;
+}
+
+/* Hidden helper */
+.biseccion-preview.hidden{ display: none !important; }
+
+/* hide the hidden preview input from layout */
+#preview_image{ display:none !important; }
+
+/* ensure styled-preview class for JS decoration */
+.styled-preview{ border-color: #6ee7b7; }
+
+.grafico_contendor{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 12px auto 22px auto;
+    max-width: 900px;
+}
+.grafico-fx{
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid rgba(58,65,87,0.6);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
