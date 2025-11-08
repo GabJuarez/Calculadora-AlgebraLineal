@@ -77,7 +77,6 @@ def biseccion(funcion: str, intervalo: Tuple[str, str], error : float = 0.0001, 
     Devuelve la aproximacion de la raiz usando el metodo de biseccion
     con la funcion dada en el intervalo dado hasta el error dado
     0.0001 por defecto
-    El intervalo puede ser strings como "1/2", "2.5", "ln(2)", etc.
     """
     arbol_funcion = transformar_sintaxis(funcion)
     arbol_funcion = ast.parse(arbol_funcion, mode="eval")

@@ -210,57 +210,106 @@ def transformar_sintaxis(expr: str) -> str:
     Transforma una expresión de entrada del usuario a sintaxis válida de Python.
     - '^' -> '**'
     - 'sen' -> 'sin', 'ln' -> 'log'
-    - inserta multiplicación implícita: '2x' -> '2*x', ')x' -> ')*x'
+    - inserta multiplicación implícita: '2x' -> '2*x', ')x' -> ')*x', '2(' -> '2*('
 
-    Se intenta reutilizar `app.logic.utils.transformar_sintaxis` si está disponible.
+    Hace transformaciones seguras y no asume que la entrada ya es string.
     """
-    s = expr.strip()
+    if expr is None:
+        return ''
+    # Asegurar que trabajamos con string
+    s = str(expr).strip()
     # reemplazos simples
-    s = s.replace("^", "**")
-    # reemplazos de funciones/abreviaturas en forma sensible a mayúsculas
+    s = s.replace('^', '**')
+    # Normalizar algunos nombres en español a funciones de math
     replacements = {
-        r"\bsen(?=\s*\()": "sin",
-        r"\bsenh(?=\s*\()": "sinh",
-        r"\bln(?=\s*\()": "log",
-        # cos, tan, exp, sqrt, etc. se dejan como están (se asume que el usuario usa cos/tan)
+        r"\bsen\b": "sin",
+        r"\bsinh\b": "sinh",
+        r"\bln\b": "log",
+        r"\bexp\b": "exp",
+        r"\bsqrt\b": "sqrt",
+        # dejar cos/tan/log si vienen en inglés
     }
     for pat, repl in replacements.items():
         s = re.sub(pat, repl, s, flags=re.IGNORECASE)
-    # insertar multiplicación entre número/u paréntesis cerrado y variable/función abierta
-    s = re.sub(r"(\d|\))\s*(?=[A-Za-z\(])", r"\1*", s)
+    # insertar multiplicación implícita entre: número o paréntesis cerrado y paréntesis abierto/función/variable
+    # ejemplos: 2x -> 2*x, 2(x+1) -> 2*(x+1), )( -> )*(
+    # solamente entre número/parentesis cerrado y letra o '('
+    s = re.sub(r"(?<=[0-9\)])\s*(?=[A-Za-z\(])", "*", s)
+    # eliminar caracteres unicode invisibles y normalizar espacios
+    s = unicodedata.normalize('NFKC', s)
+    s = re.sub(r"\s+", " ", s)
     return s
+
 
 def parse_input_number(value) -> float:
     """
-    Convierte un string en un número float, aceptando fracciones, decimales y expresiones matemáticas.
+    Convierte un string o número en un float, aceptando fracciones, decimales y expresiones matemáticas.
+    Acepta: "1/2", "2.5", "ln(2)", "sqrt(2)", "3/4 + 1/2", "pi", "e"
     Si recibe un float/int, lo retorna directamente.
-    Ejemplos: "1/2", "2.5", "ln(2)", "sqrt(2)", "3/4 + 1/2"
     """
     import math
     import ast
-    from fractions import Fraction
+
+    # Si ya es número, devolver float
     if isinstance(value, (float, int)):
         return float(value)
-    value = value.strip().replace('^', '**')
-    value = re.sub(r"\\bln\\b", "log", value)
-    allowed_names = {name: getattr(math, name) for name in dir(math) if not name.startswith("_")}
-    allowed_names["Fraction"] = Fraction
-    if re.match(r"^\\d+\\s*/\\s*\\d+$", value):
-        return float(Fraction(value))
+    if value is None:
+        raise ValueError("Valor vacío")
+
+    s = str(value).strip()
+    if s == '':
+        raise ValueError("Valor vacío")
+
+    # usar transformar_sintaxis para reemplazos comunes
+    s = transformar_sintaxis(s)
+
+    # Construir entorno seguro con funciones de math y constantes
+    allowed_names = {name: getattr(math, name) for name in dir(math) if not name.startswith('_')}
+    # añadir alias comunes y Fraction si se quiere
+    from fractions import Fraction
+    allowed_names['Fraction'] = Fraction
+    allowed_names['pi'] = math.pi
+    allowed_names['e'] = math.e
+
+    # Intentar caso simple de fracción entero/entero (ej: 3/4) -> usar Fraction para precisión
+    simple_frac = re.fullmatch(r"([+-]?\d+)\s*/\s*([+-]?\d+)", s)
+    if simple_frac:
+        num, den = simple_frac.groups()
+        return float(Fraction(int(num), int(den)))
+
+    # Intentar conversión directa a float
     try:
-        return float(value)
-    except ValueError:
-        pass
-    try:
-        tree = ast.parse(value, mode="eval")
-        for node in ast.walk(tree):
-            if not (isinstance(node, (ast.Expression, ast.BinOp, ast.UnaryOp, ast.Call, ast.Name, ast.Load, ast.Constant, ast.Num))):
-                raise ValueError("Expresión no permitida")
-            if isinstance(node, ast.Name) and node.id not in allowed_names:
-                raise ValueError(f"Función o nombre '{node.id}' no permitido")
-        return float(eval(compile(tree, filename="<ast>", mode="eval"), {"__builtins__": None}, allowed_names))
+        return float(s)
     except Exception:
-        raise ValueError(f"No se pudo convertir '{value}' a número")
+        pass
+
+    # Evaluar expresión segura usando AST
+    try:
+        tree = ast.parse(s, mode='eval')
+    except SyntaxError as e:
+        raise ValueError(f"Sintaxis inválida en número/expresión: {e}")
+
+    # Validar nodos permitidos
+    ALLOWED_NODES = (
+        ast.Expression, ast.BinOp, ast.UnaryOp, ast.Num, ast.Constant,
+        ast.Call, ast.Name, ast.Load, ast.Subscript, ast.Index,
+        ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Pow, ast.Mod, ast.FloorDiv,
+        ast.UAdd, ast.USub, ast.Tuple, ast.List
+    )
+
+    for node in ast.walk(tree):
+        if not isinstance(node, ALLOWED_NODES):
+            raise ValueError(f"Expresión no permitida: {type(node).__name__}")
+        # nombres solo de math y 'Fraction'
+        if isinstance(node, ast.Name):
+            if node.id not in allowed_names:
+                raise ValueError(f"Nombre o función '{node.id}' no permitido en expresiones numéricas")
+
+    try:
+        value_eval = eval(compile(tree, filename='<ast>', mode='eval'), {'__builtins__': None}, allowed_names)
+        return float(value_eval)
+    except Exception as e:
+        raise ValueError(f"No se pudo convertir '{value}' a número: {e}")
 
 if __name__ == '__main__':
     matriz = [[2, 1, -1],

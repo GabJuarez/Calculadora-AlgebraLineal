@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, jsonify
 from app import (gauss_jordan, resolver_cramer, gauss_jordan_pasos,
                  eliminacion_gaussiana, matriz_desde_formulario, traspuesta,
                  matriz_triangular,calcular_determinante, biseccion)
@@ -196,13 +196,214 @@ def biseccion_view():
     resultado = None
     error = None
     pasos = None
+    plot_data = None
+    funcion = ''
+    limite_inferior = ''
+    limite_superior = ''
     if request.method == 'POST':
         try:
-            funcion = request.form['funcion']
-            a = float(request.form['limite_inferior'])
-            b = float(request.form['limite_superior'])
-            raiz, tabla, iteraciones = biseccion(funcion, (a, b))
+            # If client submitted a preview image, reuse it instead of regenerating
+            preview_image_b64 = request.form.get('preview_image', '')
+            funcion = request.form.get('funcion', '').strip()
+            limite_inferior = request.form.get('limite_inferior', '').strip()
+            limite_superior = request.form.get('limite_superior', '').strip()
+
+            if preview_image_b64:
+                # Client provided a PNG base64 for preview; use it directly
+                plot_data = preview_image_b64
+                # If limits are empty, try to detect a good interval for the algorithm by sampling
+                if not limite_inferior or not limite_superior:
+                    try:
+                        from app.logic.biseccion import evaluar
+                        # sample across a wide range and look for sign change
+                        import math
+                        a = -10.0
+                        b = 10.0
+                        n = 800
+                        xs = [a + i*(b-a)/(n-1) for i in range(n)]
+                        ys = []
+                        for x in xs:
+                            try:
+                                ys.append(evaluar(funcion, x))
+                            except Exception:
+                                ys.append(float('nan'))
+                        crossing = None
+                        for i in range(n-1):
+                            y1 = ys[i]
+                            y2 = ys[i+1]
+                            if not (isinstance(y1, float) and isinstance(y2, float)):
+                                continue
+                            if math.isnan(y1) or math.isnan(y2):
+                                continue
+                            if y1 * y2 <= 0:
+                                frac = abs(y1) / (abs(y1) + abs(y2)) if (abs(y1) + abs(y2)) != 0 else 0.5
+                                crossing = xs[i] + (xs[i+1]-xs[i]) * frac
+                                break
+                        if crossing is not None:
+                            limite_inferior = str(crossing - 2)
+                            limite_superior = str(crossing + 2)
+                        else:
+                            # fallback small default interval
+                            limite_inferior = '-1'
+                            limite_superior = '1'
+                    except Exception:
+                        limite_inferior = '-1'
+                        limite_superior = '1'
+            else:
+                from io import BytesIO
+                import base64
+                import matplotlib
+                matplotlib.use('Agg')
+                import matplotlib.pyplot as plt
+                from app.logic.biseccion import evaluar
+                from app.logic.utils import parse_input_number
+
+                # Parse endpoints using parse_input_number (accepts fractions, ln, etc.)
+                a = parse_input_number(limite_inferior)
+                b = parse_input_number(limite_superior)
+
+                # Generate plot data sampling the function between a and b
+                xs = []
+                ys = []
+                # If a == b, expand a bit for plotting
+                if a == b:
+                    a -= 1
+                    b += 1
+                n_points = 401
+                for i in range(n_points):
+                    x = a + i * (b - a) / (n_points - 1)
+                    xs.append(x)
+                    try:
+                        y = evaluar(funcion, x)
+                    except Exception:
+                        y = float('nan')
+                    ys.append(y)
+
+                fig, ax = plt.subplots(figsize=(6, 3.5))
+                ax.axhline(0, color='black', linewidth=0.8)
+                ax.plot(xs, ys, color='C0')
+                ax.set_xlabel('x')
+                ax.set_ylabel('f(x)')
+                ax.grid(True, linestyle=':', linewidth=0.6)
+                fig.tight_layout()
+                buf = BytesIO()
+                plt.savefig(buf, format='png', dpi=100)
+                plt.close(fig)
+                buf.seek(0)
+                plot_data = base64.b64encode(buf.read()).decode('ascii')
+
+            # Run bisection algorithm (uses internal parsing/evaluador)
+            raiz, tabla, iteraciones = biseccion(funcion, (limite_inferior, limite_superior))
             resultado = {'raiz': raiz, 'tabla': tabla, 'iteraciones': iteraciones}
         except Exception as e:
             error = str(e)
-    return render_template('biseccion.html', resultado=resultado, error=error, pasos=pasos)
+    return render_template('biseccion.html', resultado=resultado, error=error, pasos=pasos,
+                           funcion=funcion, limite_inferior=limite_inferior, limite_superior=limite_superior,
+                           plot_data=plot_data)
+
+@routes_bp.route('/biseccion/preview', methods=['POST'])
+def biseccion_preview():
+    """Genera un PNG base64 con el gráfico de la función entre los límites proporcionados.
+    Devuelve JSON: { plot_data: 'base64...' } o { error: 'mensaje' }.
+    """
+    try:
+        from io import BytesIO
+        import base64
+        import math
+        import matplotlib
+        matplotlib.use('Agg')
+        import matplotlib.pyplot as plt
+        from app.logic.biseccion import evaluar
+        from app.logic.utils import parse_input_number
+
+        funcion = request.form.get('funcion', '').strip()
+        limite_inferior = request.form.get('limite_inferior', '').strip()
+        limite_superior = request.form.get('limite_superior', '').strip()
+        if not funcion:
+            return jsonify({'error': 'Función vacía'}), 400
+
+        # If limits not provided or empty, use a default sampling and try to detect crossing
+        a = None
+        b = None
+        try:
+            if limite_inferior != '':
+                a = parse_input_number(limite_inferior)
+            if limite_superior != '':
+                b = parse_input_number(limite_superior)
+        except Exception as e:
+            return jsonify({'error': f'Error en los límites: {e}'}), 400
+
+        # Default sampling range
+        if a is None or b is None or a == b:
+            # initial range
+            a = -5.0 if a is None else a
+            b = 5.0 if b is None else b
+
+        # Sample and try to find crossing; if crossing found and original limits were empty, zoom and resample
+        n_points = 800
+        xs = [a + i * (b - a) / (n_points - 1) for i in range(n_points)]
+        ys = []
+        for x in xs:
+            try:
+                ys.append(evaluar(funcion, x))
+            except Exception:
+                ys.append(float('nan'))
+
+        # detect first sign change
+        crossing = None
+        for i in range(len(xs)-1):
+            y1 = ys[i]
+            y2 = ys[i+1]
+            if not (isinstance(y1, float) and isinstance(y2, float)):
+                continue
+            if math.isnan(y1) or math.isnan(y2):
+                continue
+            if y1 * y2 <= 0:
+                # linear interpolate
+                try:
+                    frac = abs(y1) / (abs(y1) + abs(y2)) if (abs(y1) + abs(y2)) != 0 else 0.5
+                    crossing = xs[i] + (xs[i+1] - xs[i]) * frac
+                    break
+                except Exception:
+                    crossing = xs[i]
+                    break
+
+        if crossing is not None and (request.form.get('limite_inferior','') == '' or request.form.get('limite_superior','') == ''):
+            # zoom around crossing
+            a = crossing - 2
+            b = crossing + 2
+            xs = [a + i * (b - a) / (n_points - 1) for i in range(n_points)]
+            ys = []
+            for x in xs:
+                try:
+                    ys.append(evaluar(funcion, x))
+                except Exception:
+                    ys.append(float('nan'))
+
+        # create the plot
+        fig, ax = plt.subplots(figsize=(8, 3.5))
+        ax.axhline(0, color='black', linewidth=0.8)
+        ax.plot(xs, ys, color='#1f77b4', linewidth=1.8)
+        if crossing is not None:
+            ax.axvline(crossing, color='#ff7f0e', linestyle='--', linewidth=1.2)
+        ax.set_xlabel('x')
+        ax.set_ylabel('f(x)')
+        ax.grid(True, linestyle=':', linewidth=0.6, color='#444')
+        ax.set_facecolor('#1a1c2a')
+        fig.patch.set_facecolor('#101216')
+        # style ticks/labels light
+        ax.tick_params(colors='#dbeafe')
+        ax.xaxis.label.set_color('#dbeafe')
+        ax.yaxis.label.set_color('#dbeafe')
+        for spine in ax.spines.values():
+            spine.set_color('#2b3347')
+
+        fig.tight_layout()
+        buf = BytesIO()
+        plt.savefig(buf, format='png', dpi=120, facecolor=fig.get_facecolor())
+        plt.close(fig)
+        buf.seek(0)
+        plot_data = base64.b64encode(buf.read()).decode('ascii')
+        return jsonify({'plot_data': plot_data})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
