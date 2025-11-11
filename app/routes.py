@@ -384,8 +384,8 @@ def biseccion_preview():
         fig, ax = plt.subplots(figsize=(8, 3.5))
         ax.axhline(0, color='black', linewidth=0.8)
         ax.plot(xs, ys, color='#1f77b4', linewidth=1.8)
-        if crossing is not None:
-            ax.axvline(crossing, color='#ff7f0e', linestyle='--', linewidth=1.2)
+        # if crossing is not None:
+        #     ax.axvline(crossing, color='#ff7f0e', linestyle='--', linewidth=1.2)
         ax.set_xlabel('x')
         ax.set_ylabel('f(x)')
         ax.grid(True, linestyle=':', linewidth=0.6, color='#444')
@@ -407,3 +407,20 @@ def biseccion_preview():
         return jsonify({'plot_data': plot_data})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@routes_bp.route('/falsa_posicion', methods=['GET', 'POST'])
+def falsa_posicion_view():
+    resultado = None
+    error = None
+    pasos = None
+    if request.method == 'POST':
+        try:
+            pass
+
+        except Exception as e:
+            error = str(e)
+    return render_template('falsa_posicion.html', resultado=resultado, error=error, pasos=pasos)
+
+@routes_bp.route('/falsa_posicion/preview', methods=['POST'])
+def falsa_posicion_preview():
+    pass
