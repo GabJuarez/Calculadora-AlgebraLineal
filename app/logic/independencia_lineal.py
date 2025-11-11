@@ -7,7 +7,7 @@ def comprobar_independencia_lineal(matriz):
     Comprueba la independencia lineal de los vectores dados como *columnas* de la matriz.
     Devuelve:
       - matriz_reducida_str: matriz en RREF con elementos como cadenas (fracciones)
-      - resultado_str: lista de cadenas con resumen (independiente/ dependiente, rango, vectores independientes)
+      - resultado_str: lista de cadenas con resumen (independiente/ dependiente y explicación)
       - pasos_str: lista de tuplas (descripción, matriz_en_cadenas) con los pasos intermedios
     """
     validar_matriz(matriz)
@@ -18,8 +18,7 @@ def comprobar_independencia_lineal(matriz):
     if columnas > filas:
         return None, [
             "Dependientes",
-            f"Rango: {filas}",
-            "El número de vectores es mayor que el número de entradas, por lo que son linealmente dependientes."
+            "Hay más vectores que entradas (dimensión), por tanto existen relaciones lineales no triviales entre ellos, es decir, son dependientes."
         ], []
 
     # trabajar con Fracciones
@@ -59,15 +58,31 @@ def comprobar_independencia_lineal(matriz):
     rango = len(pivotes)
     independientes = [col for (_, col) in pivotes]
     es_independiente = (rango == columnas)
-    estado = "Independientes" if es_independiente else "Dependientes"
     vectores_independientes = [subindice(c+1) for c in independientes]  # 1-based con subíndices
 
+    # Construir mensajes explicativos sin mostrar "Rango:" explícitamente
+    if es_independiente:
+        # caso especial: un solo vector
+        if columnas == 1:
+            # comprobar si es el vector cero
+            columna0 = [matriz[i][0] for i in range(filas)]
+            es_cero = all(el == 0 for el in columna0)
+            if es_cero:
+                estado = "Dependientes"
+                razon = "El único vector es el vector cero, así que es linealmente dependiente (no genera un subespacio no trivial)."
+            else:
+                estado = "Independientes"
+                razon = "Un único vector no nulo es independiente: la única solución de A·x=0 es la solución trivial x=0."
+        else:
+            estado = "Independientes"
+            razon = "Solo la solución trivial (x=0) satisface A·x = 0; por tanto las columnas (vectores) son linealmente independientes."
+        resultado_str = [estado, razon, "Vectores independientes (columnas): [" + ", ".join(vectores_independientes) + "]"]
+    else:
+        estado = "Dependientes"
+        razon = "Existe una combinación lineal no trivial que anula los vectores, por lo que son linealmente dependientes (hay soluciones no triviales de A·x=0)."
+        resultado_str = [estado, razon, "Vectores pivote (columnas independientes identificadas): [" + ", ".join(vectores_independientes) + "]"]
+
     matriz_reducida_str = [[fraccion_str(matriz_trabajo[i][j]) for j in range(columnas)] for i in range(filas)]
-    resultado_str = [
-        estado,
-        f"Rango: {rango}",
-        "Vectores independientes (columnas): [" + ", ".join(vectores_independientes) + "]"
-    ]
     pasos_str = pasos + [("Matriz en forma reducida (RREF)", [[fraccion_str(el) for el in f] for f in matriz_trabajo])]
 
     return matriz_reducida_str, resultado_str, pasos_str

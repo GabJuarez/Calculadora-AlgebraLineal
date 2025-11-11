@@ -47,31 +47,54 @@
 {% endif %}
 
 {% if pasos %}
-    <div class="pasos">
-        <h3 class="titulo-pasos">Pasos realizados</h3>
-        <ul>
-            {% for paso in pasos %}
-                <li>
-                    {% if 'Matriz parcial' in paso or 'Matriz A tras' in paso or 'Matriz B tras' in paso %}
-                        <div class="matriz-label-final">{{ paso.split(':')[0]|safe }}</div>
-                        <table class="matriz_resultado">
-                            {% set matriz = paso.split(':', 1)[1].replace("'", '') %}
-                            {% set matriz = matriz.replace('[[', '[').replace(']]', ']') %}
-                            {% set matriz = matriz.replace('], [', ']|[') %}
-                            {% for fila in matriz.split('|') %}
-                                <tr>
-                                    {% for val in fila.replace('[','').replace(']','').split(',') %}
-                                        <td>{{ val.strip().replace('"','') }}</td>
+    <div class="panel-resultado">
+        <h3 class="titulo-resultado">Pasos realizados</h3>
+        <div class="pasos">
+            <ul>
+                {% for paso in pasos %}
+                    <li>
+                        {% if paso is string %}
+                            {# legacy string handling: could contain a matrix label and array text #}
+                            {% if 'Matriz parcial' in paso or 'Matriz A tras' in paso or 'Matriz B tras' in paso %}
+                                <div class="matriz-label-final">{{ paso.split(':')[0]|safe }}</div>
+                                <table class="matriz_resultado">
+                                    {% set matriz = paso.split(':', 1)[1].replace("'", '') %}
+                                    {% set matriz = matriz.replace('[[', '[').replace(']]', ']') %}
+                                    {% set matriz = matriz.replace('], [', ']|[') %}
+                                    {% for fila in matriz.split('|') %}
+                                        <tr>
+                                            {% for val in fila.replace('[','').replace(']','').split(',') %}
+                                                <td>{{ val.strip().replace('"','') }}</td>
+                                            {% endfor %}
+                                        </tr>
                                     {% endfor %}
-                                </tr>
-                            {% endfor %}
-                        </table>
-                    {% else %}
-                        {{ paso|safe }}
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
+                                </table>
+                            {% else %}
+                                {{ format_paso(paso)|safe }}
+                            {% endif %}
+                        {% else %}
+                            {# Paso structured as (texto, matriz) from utils.py - render text with format_paso and matrix as table #}
+                            {% set text = paso[0] %}
+                            {% set mat = paso[1] %}
+                            {{ format_paso(text)|safe }}
+                            {% if mat %}
+                                <table class="matriz_resultado">
+                                    <tbody>
+                                    {% for fila in mat %}
+                                        <tr>
+                                        {% for val in fila %}
+                                            <td>{{ val }}</td>
+                                        {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 {% endif %}
 

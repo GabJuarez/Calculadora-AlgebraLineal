@@ -14,6 +14,30 @@
     {% block head %}{% endblock %}
 </head>
 <body>
+
+{% macro format_paso(texto) %}
+    {% if texto %}
+        {# If texto already contains HTML tags, render it raw #}
+        {% if '<' in texto and '>' in texto %}
+            {{ texto|safe }}
+        {% else %}
+            {% set partes = texto.split(':') %}
+            {% if partes|length > 1 %}
+                {% set pref = partes[0] %}
+                {% set resto = partes[1:]|join(':') %}
+                <div class="pills-row">
+                    <span class="paso-prefix">{{ pref }}:</span>
+                    <span class="paso-rest">{{ resto }}</span>
+                </div>
+            {% else %}
+                <div class="pills-row">
+                    <span class="paso-rest">{{ texto }}</span>
+                </div>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
     {% block body %}{% endblock %}
 </body>
 </html>

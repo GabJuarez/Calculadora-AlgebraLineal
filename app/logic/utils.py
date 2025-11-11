@@ -150,8 +150,9 @@ def sumar_matrices_pasos(A, B):
             b_str = fraccion_str(B[i][j])
             suma_str = fraccion_str(suma)
             fila_paso.append(f"F{subindice(i+1)}[{subindice(j+1)}] = {a_str} + {b_str} = {suma_str}")
-        pasos.append(f"<strong>Operación en fila {subindice(i+1)}</strong><br>" + '<br>'.join(fila_paso))
-        pasos.append(f"<span class='matriz-label-final'>Matriz parcial tras sumar fila {subindice(i+1)}</span>:{matriz_a_str(resultado)}")
+        # Create a clean text (no HTML) and attach the current matrix as strings so templates render pills + table
+        texto = f"Operación en fila {subindice(i+1)}: " + ' ; '.join(fila_paso)
+        pasos.append((texto, matriz_a_str(resultado)))
     return resultado, pasos
 
 def restar_matrices_pasos(A, B):
@@ -172,8 +173,8 @@ def restar_matrices_pasos(A, B):
             b_str = fraccion_str(B[i][j])
             resta_str = fraccion_str(resta)
             fila_paso.append(f"F{subindice(i+1)}[{subindice(j+1)}] = {a_str} - {b_str} = {resta_str}")
-        pasos.append(f"<strong>Operación en fila {subindice(i+1)}</strong><br>" + '<br>'.join(fila_paso))
-        pasos.append(f"<span class='matriz-label-final'>Matriz parcial tras restar fila {subindice(i+1)}</span>:{matriz_a_str(resultado)}")
+        texto = f"Operación en fila {subindice(i+1)}: " + ' ; '.join(fila_paso)
+        pasos.append((texto, matriz_a_str(resultado)))
     return resultado, pasos
 
 def multiplicar_matrices_pasos(A, B):
@@ -200,8 +201,8 @@ def multiplicar_matrices_pasos(A, B):
             suma_str = fraccion_str(suma)
             resultado[i][j] = suma
             fila_paso.append(f"F{subindice(i+1)}[{subindice(j+1)}] = " + ' + '.join(detalle) + f" = {suma_str}")
-        pasos.append(f"<strong>Operación en fila {subindice(i+1)}</strong><br>" + '<br>'.join(fila_paso))
-        pasos.append(f"<span class='matriz-label-final'>Matriz parcial tras multiplicar fila {subindice(i+1)}</span>:{matriz_a_str(resultado)}")
+        texto = f"Operación en fila {subindice(i+1)}: " + ' ; '.join(fila_paso)
+        pasos.append((texto, matriz_a_str(resultado)))
     return resultado, pasos
 
 

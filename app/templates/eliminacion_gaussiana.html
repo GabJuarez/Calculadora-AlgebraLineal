@@ -13,63 +13,106 @@
 {% endif %}
 
 {% if matriz_triangular %}
-    <h2 class="titulo_matriz">Matriz triangular superior:</h2>
-    <table class="matriz_resultado">
-        <thead>
+    <div class="panel-resultado">
+        <h3 class="titulo-resultado">Matriz triangular superior</h3>
+        <table class="matriz_resultado">
+            <thead>
+                <tr>
+                    {% for i in range(matriz_triangular[0]|length - 1) %}
+                        <th>x{{ i+1 }}</th>
+                    {% endfor %}
+                    <th>b</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for fila in matriz_triangular %}
             <tr>
-                {% for i in range(matriz_triangular[0]|length - 1) %}
-                    <th>x{{ i+1 }}</th>
+                {% for celda in fila %}
+                <td>{{ celda }}</td>
                 {% endfor %}
-                <th>b</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for fila in matriz_triangular %}
-        <tr>
-            {% for celda in fila %}
-            <td>{{ celda }}</td>
             {% endfor %}
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-{% endif %}
+            </tbody>
+        </table>
 
-{% if soluciones %}
-    <h2 class="titulo_matriz">Soluciones:</h2>
-    <ul class="soluciones">
-        {% for sol in soluciones %}
-        <li><span class="variable">x{{ loop.index }}</span> <span class="igual">=</span> <span class="valor_solucion">{{ sol }}</span></li>
-        {% endfor %}
-    </ul>
+    {% if soluciones %}
+        <h3 class="titulo-resultado">Soluciones</h3>
+        <ul class="soluciones">
+            {% for sol in soluciones %}
+            <li><span class="variable">x{{ loop.index }}</span> <span class="igual">=</span> <span class="valor_solucion">{{ sol }}</span></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    </div>
 {% endif %}
 
 {% if pasos %}
     <h2 class="titulo_matriz">Paso a paso:</h2>
     <ul class="pasos">
-        {% for paso, matriz in pasos %}
+        {% for paso in pasos %}
         <li>
-            <strong>{{ paso }}</strong>
-            {% if matriz %}
-            <table class="matriz_resultado">
-                <thead>
-                    <tr>
-                        {% for i in range(matriz[0]|length - 1) %}
-                            <th>x{{ i+1 }}</th>
+            {% if paso is string %}
+                {% if 'Matriz' in paso or '[' in paso %}
+                    {% if ':' in paso %}
+                        {% set label = paso.split(':',1)[0] %}
+                        {% set matriz_text = paso.split(':',1)[1] %}
+                    {% else %}
+                        {% set label = '' %}
+                        {% set matriz_text = paso %}
+                    {% endif %}
+                    {% if label %}
+                        <div class="matriz-label-final">{{ label }}</div>
+                    {% endif %}
+                    {% set m = matriz_text.replace("'", '') %}
+                    {% set m = m.replace('[[', '[').replace(']]', ']') %}
+                    {% set m = m.replace('], [', ']|[') %}
+                    <table class="matriz_resultado">
+                        <thead>
+                            <tr>
+                                {% for i in range(m.split('|')[0].replace('[','').replace(']','').split(',')|length -1) %}
+                                    <th>x{{ i+1 }}</th>
+                                {% endfor %}
+                                <th>b</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for fila in m.split('|') %}
+                            <tr>
+                            {% for val in fila.replace('[','').replace(']','').split(',') %}
+                                <td>{{ val.strip().replace('"','') }}</td>
+                            {% endfor %}
+                            </tr>
                         {% endfor %}
-                        <th>b</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for fila in matriz %}
-                    <tr>
-                    {% for celda in fila %}
-                        <td>{{ celda }}</td>
-                    {% endfor %}
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                        </tbody>
+                    </table>
+                {% else %}
+                    {{ format_paso(paso)|safe }}
+                {% endif %}
+            {% else %}
+                {% set text = paso[0] %}
+                {% set mat = paso[1] %}
+                {{ format_paso(text)|safe }}
+                {% if mat %}
+                    <table class="matriz_resultado">
+                        <thead>
+                            <tr>
+                                {% for i in range(mat[0]|length - 1) %}
+                                    <th>x{{ i+1 }}</th>
+                                {% endfor %}
+                                <th>b</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for fila in mat %}
+                            <tr>
+                            {% for celda in fila %}
+                                <td>{{ celda }}</td>
+                            {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
             {% endif %}
         </li>
         {% endfor %}

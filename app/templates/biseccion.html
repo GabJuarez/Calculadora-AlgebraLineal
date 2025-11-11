@@ -32,19 +32,23 @@
     <div id="biseccion_preview_plot" class="biseccion-preview hidden"></div>
 </div>
 
-{% if plot_data %}
-  <h3 class="tabla_titulo centrado">Gráfico f(x)</h3>
-  <div class="grafico_contendor">
-    <img src="data:image/png;base64,{{ plot_data }}" alt="Grafico de la funcion" class="grafico-fx">
-  </div>
-{% endif %}
+{% if plot_data or resultado %}
+  <div class="panel-resultado">
+    {% if plot_data %}
+      <h3 class="titulo-resultado">Gráfico f(x)</h3>
+      <div class="grafico_contendor">
+        <img src="data:image/png;base64,{{ plot_data }}" alt="Grafico de la funcion" class="grafico-fx">
+      </div>
+    {% endif %}
 
-{% if resultado %}
-    <h2 class="resultado_titulo">Resultado</h2>
-    <p class="resultado_texto">Raíz aproximada: {{ resultado.raiz }}</p>
-    <p class="resultado_texto">Iteraciones: {{ resultado.iteraciones }}</p>
-    <h3 class="tabla_titulo centrado">Tabla de pasos:</h3>
-    <div class="tabla-resultados estilizada">{{ resultado.tabla|safe }}</div>
+    {% if resultado %}
+      <h3 class="titulo-resultado">Resultado</h3>
+      <p class="resultado_texto"><strong>Raíz aproximada:</strong> {{ resultado.raiz }}</p>
+      <p class="resultado_texto"><strong>Iteraciones:</strong> {{ resultado.iteraciones }}</p>
+      <h3 class="titulo-resultado">Tabla de pasos</h3>
+      <div class="tabla-resultados estilizada">{{ resultado.tabla|safe }}</div>
+    {% endif %}
+  </div>
 {% endif %}
 
 {% if error %}

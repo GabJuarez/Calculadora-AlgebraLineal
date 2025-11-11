@@ -8,45 +8,43 @@
     text-shadow: 0 2px 12px #23294699;
 }
 .matriz_resultado {
-    margin: 32px auto;
+    margin: 28px auto;
     border-collapse: collapse;
-    box-shadow: 0 4px 18px rgba(34, 46, 52, 0.18);
-    background: #232946;
-    border-radius: 16px;
+    box-shadow: 0 6px 26px rgba(6,12,26,0.32);
+    background: linear-gradient(180deg, var(--panel-800), rgba(20,28,46,0.6));
+    border-radius: 14px;
     overflow: hidden;
-    min-width: 320px;
-    max-width: 90vw;
-    animation: fadeInMatriz 0.7s ease-in;
+    min-width: 300px;
+    max-width: 95vw;
+    animation: fadeInMatriz 0.6s ease-in;
 }
 @keyframes fadeInMatriz {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 .matriz_resultado th {
-    background: linear-gradient(90deg, #393e6c 80%, #232946 100%);
-    color: #A7E3C2;
-    font-weight: bold;
-    padding: 12px 22px;
-    border-bottom: 2px solid #A7E3C2;
+    background: linear-gradient(90deg, var(--panel-700), var(--panel-800));
+    color: var(--accent-2);
+    font-weight: 800;
+    padding: 10px 18px;
+    border-bottom: 2px solid rgba(167,227,194,0.06);
     text-align: center;
-    font-size: 1.18em;
-    letter-spacing: 1.2px;
+    font-size: 1.06rem;
 }
 .matriz_resultado td {
-    border: 1px solid #A7E3C2;
-    padding: 12px 22px;
+    border: 1px solid rgba(167,227,194,0.06);
+    padding: 10px 16px;
     text-align: center;
     color: #F4F4F6;
-    background: #393e6c;
-    font-size: 1.18em;
-    transition: background 0.2s;
+    background: linear-gradient(180deg, #333a55, #393e6c);
+    font-size: 1.02rem;
 }
 .matriz_resultado tr {
     background: #232946;
 }
 .matriz_resultado tr:hover td {
-    background: #314a6e;
-    color: #6EC1E4;
+    background: linear-gradient(90deg, rgba(46,108,174,0.06), rgba(46,108,174,0.03));
+    color: var(--accent-2);
 }
 .matriz-label-final {
     text-align: center;
@@ -58,15 +56,17 @@
     text-shadow: 0 2px 8px #232946;
 }
 .soluciones {
-    margin: 32px auto 0 auto;
-    padding: 0;
-    list-style: none;
-    width: fit-content;
-    background: #232946;
+    margin: 22px auto 0 auto;
+    padding: 0.6rem;
+    width: 92%; /* ocupar ancho del panel para centrar elementos */
+    background: linear-gradient(180deg, var(--panel-800), rgba(20,28,46,0.6));
     border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(34, 46, 52, 0.13);
-    border: 1.5px solid #A7E3C2;
-    animation: fadeInSoluciones 0.7s ease-in;
+    box-shadow: 0 6px 26px rgba(6,12,26,0.22);
+    border: 1px solid var(--panel-border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center; /* centrar los li */
 }
 @keyframes fadeInSoluciones {
     from { opacity: 0; transform: translateY(20px); }
@@ -74,16 +74,17 @@
 }
 .soluciones li {
     color: #F4F4F6;
-    font-size: 1.22em;
-    padding: 14px 32px;
-    border-bottom: 1px solid #393e6c;
-    text-align: left;
+    font-size: 1.04rem;
+    padding: 10px 18px;
+    border-bottom: none;
+    text-align: center;
     letter-spacing: 1.2px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: #393e6c;
-    transition: background 0.2s, color 0.2s;
+    gap: 14px;
+    justify-content: center; /* centrar el contenido del li */
+    width: 100%;
+    background: transparent; /* dejar el fondo uniforme con el panel */
 }
 .soluciones li:last-child {
     border-bottom: none;
@@ -92,36 +93,35 @@
     background: #A7E3C2;
     color: #232946;
 }
+/* Style the variable label as a pill on the left */
 .variable {
-    color: #6EC1E4;
-    font-weight: bold;
-    font-size: 1.22em;
-    margin-right: 6px;
-    letter-spacing: 1.2px;
+    background: linear-gradient(90deg, rgba(110,193,228,0.12), rgba(110,193,228,0.06));
+    color: var(--accent-2);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 800;
+    box-shadow: 0 6px 18px rgba(13,24,36,0.08);
 }
-.igual {
-    color: #A7E3C2;
-    font-weight: bold;
-    margin: 0 6px;
-    font-size: 1.22em;
-}
+/* Style the solution value as a pill */
 .valor_solucion {
-    color: #FFD700;
-    font-weight: bold;
-    font-size: 1.22em;
-    letter-spacing: 1.2px;
+    background: linear-gradient(90deg, rgba(255,217,128,0.06), rgba(255,217,128,0.02));
+    color: var(--gold);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 800;
+    box-shadow: 0 6px 18px rgba(13,24,36,0.06);
 }
 .resultado-determinante {
     margin: 36px auto 0 auto;
     padding: 20px 44px;
     width: fit-content;
     background: linear-gradient(90deg, #fffbe6 80%, #f6f8fa 100%);
-    border: 2.5px solid #FFD700;
+    border: 2px solid var(--gold);
+    color: #232946;
+    box-shadow: 0 8px 32px rgba(255,215,0,0.08);
     border-radius: 16px;
     font-size: 2.3em;
-    color: #232946;
     font-weight: bold;
-    box-shadow: 0 6px 24px rgba(255, 215, 0, 0.13);
     text-align: center;
     letter-spacing: 1.7px;
     opacity: 0;
@@ -236,9 +236,109 @@
 .boton_volver:hover, .boton_calcular:hover, .limpiar_matriz:hover {
     background: #3a506b;
 }
-.form_operacion_matrices > * {
-    flex: 1 1 0;
-    min-height: 100%;
+.boton_calcular {
+    background: linear-gradient(90deg, #6EC1E4 0%, #4AA3D6 100%);
+    color: #082032;
+    border: none;
+    padding: 0.7rem 1.3rem;
+    border-radius: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 24px rgba(46,108,174,0.18);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s;
+}
+.boton_calcular:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(46,108,174,0.22);
+}
+/* Estilos para el panel de entrada de matrices y los inputs generados */
+.form_matriz {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    margin: 1.2rem auto 0.6rem auto;
+    width: 100%;
+    max-width: 760px;
+}
+
+.form_matriz label {
+    color: #A7E3C2;
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+.form_matriz input[type="number"] {
+    width: 84px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(167,227,194,0.08);
+    background: #2b374f;
+    color: #A7E3C2;
+    text-align: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+#matriz {
+    margin: 1.2rem auto 1.6rem auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    max-width: 95vw;
+    background: linear-gradient(180deg, #232946 0%, #1d2236 100%);
+    padding: 1rem 1.2rem;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(15,22,40,0.45);
+    border: 1px solid rgba(167,227,194,0.08);
+}
+
+#matriz table {
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+#matriz td {
+    padding: 6px 8px;
+}
+
+#matriz input[type="text"], #matriz input[type="number"] {
+    width: 78px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(167,227,194,0.12);
+    background: linear-gradient(180deg, #2b374f 0%, #232946 100%);
+    color: #E6FFF2;
+    font-size: 1rem;
+    text-align: center;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.35);
+    transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
+}
+
+#matriz input[type="text"]:focus, #matriz input[type="number"]:focus {
+    outline: none;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(46, 110, 170, 0.2);
+    border-color: #6EC1E4;
+}
+
+/* placeholder styling */
+#matriz input::placeholder {
+    color: #9fb7b0;
+    opacity: 0.9;
+}
+
+/* adaptar en pantallas pequeñas */
+@media (max-width: 600px) {
+    #matriz input[type="text"], #matriz input[type="number"] {
+        width: 56px;
+        font-size: 0.95rem;
+    }
+    .form_matriz {
+        flex-direction: column;
+        gap: 0.6rem;
+        align-items: center;
+    }
 }
 @media (max-width: 1100px) {
     .form_operacion_matrices {
@@ -254,4 +354,157 @@
 @media (max-width: 900px){
     .matriz-input-panel, .operacion-panel{ width: 92%; max-width: none; }
     .matriz-input-panel .input_matriz{ width: 56px; }
+}
+/* Estilos para el contenedor de botones de los formularios de entrada */
+.botones-formulario {
+    display: flex;
+    gap: 0.9rem;
+    justify-content: center; /* centrar horizontalmente */
+    align-items: center;
+    margin: 1rem auto 2rem auto;
+    width: 100%;
+    max-width: 760px;
+    padding: 0.6rem 0.8rem;
+}
+
+.botones-formulario .boton_volver,
+.botones-formulario .boton_calcular,
+.botones-formulario .limpiar_matriz {
+    min-width: 140px;
+    padding: 0.6rem 1.1rem;
+}
+
+/* Panel de resultado general para todos los módulos */
+.panel-resultado {
+    margin: 28px auto;
+    max-width: 920px;
+    background: linear-gradient(180deg, rgba(36,41,70,0.95) 0%, rgba(28,31,52,0.98) 100%);
+    border-radius: 14px;
+    padding: 18px 22px;
+    box-shadow: 0 12px 40px rgba(8,14,30,0.55);
+    border: 1px solid rgba(110,193,228,0.07);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeInPanel 0.6s ease-out;
+}
+@keyframes fadeInPanel {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.titulo-resultado {
+    color: #A7E3C2;
+    font-weight: 800;
+    font-size: 1.28rem;
+    margin: 6px 0 14px 0;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+/* Encabezados de panel de resultado más visibles */
+.panel-resultado .titulo-resultado {
+    font-size: 1.36rem;
+    color: #DFF8FF;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    border-bottom: 1px solid rgba(255,255,255,0.02);
+    padding-bottom: 8px;
+    width: 92%;
+    text-align: center;
+}
+
+/* Pequeños refinamientos visuales */
+.panel-resultado { gap: 12px; }
+.panel-resultado .resultado_texto { font-size: 1.08rem; }
+.pasos li { width: 86%; padding: 14px 18px; }
+
+/* Ajuste para bordes y coherencia en tablas */
+.matriz_resultado, .tabla-resultados.estilizada { border-radius: 12px; }
+
+/* Botones dentro de panel-resultado */
+.panel-resultado .boton_calcular, .panel-resultado .boton_volver {
+    min-width: 140px;
+    margin: 8px;
+}
+
+/* Asegurar que las imágenes de los gráficos no sobresalgan en móviles */
+@media (max-width: 600px) {
+    .panel-resultado .grafico-fx { width: 100%; height: auto; }
+    .pasos li { width: 96%; }
+}
+
+/* Resumen para independencia lineal */
+.resumen-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    /* asegurar que todo el texto dentro del resumen tenga mayor énfasis */
+    font-weight: 700;
+}
+.resumen-status {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1.18rem;
+    letter-spacing: 0.8px;
+    width: fit-content;
+    box-shadow: 0 8px 24px rgba(4,9,20,0.35);
+    border: 1px solid rgba(255,255,255,0.03);
+}
+.resumen-success { background: linear-gradient(90deg,#173f3f,#1e6b6b); color: #E6FFF2; border-color: rgba(110,193,228,0.12); }
+.resumen-danger { background: linear-gradient(90deg,#5b2222,#7a3131); color: #FFEAEA; border-color: rgba(255,100,100,0.12); }
+.resumen-neutral { background: linear-gradient(90deg,#30384a,#2a2f3d); color: #E6FFF2; border-color: rgba(255,255,255,0.03); }
+.resumen-explanation {
+    max-width: 86%;
+    text-align: center;
+    color: #E6FFF2;
+    background: rgba(255,255,255,0.02);
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.02);
+    font-weight: 700; /* refuerzo explícito */
+}
+.resumen-vectors {
+    max-width: 86%;
+    color: #FFD966; /* dorado suave para los vectores listados */
+    font-weight: 700;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgba(255,217,128,0.04), rgba(255,217,128,0.02));
+    border: 1px solid rgba(255,217,128,0.06);
+}
+.vector-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    margin: 6px 6px 0 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(255,217,128,0.06), rgba(255,217,128,0.02));
+    color: #FFD966;
+    border: 1px solid rgba(255,217,128,0.06);
+    font-weight: 800; /* badges en negrita */
+}
+.resumen-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+}
+.resumen-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+}
+.resumen-icon {
+    font-size: 1.25rem;
+    margin-right: 8px;
+}
+.resumen-text { font-weight: 900; font-size: 1.08rem; }
+
+@media (max-width: 700px) {
+    .resumen-status { font-size: 1.02rem; padding: 8px 12px; }
+    .resumen-explanation, .resumen-vectors { max-width: 96%; }
 }

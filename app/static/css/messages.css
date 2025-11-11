@@ -1,14 +1,25 @@
-.error {
-    color: #ff4444;
-    background: linear-gradient(90deg, #fff0f0 60%, #ffeaea 100%);
-    border: 1.5px solid #ff4444;
-    padding: 12px 28px;
-    margin: 28px auto 10px auto;
+.error, .mensaje-error {
+    color: var(--danger);
+    background: linear-gradient(90deg, rgba(255,80,80,0.06), rgba(255,80,80,0.02));
+    border: 1.5px solid rgba(255,80,80,0.18);
+    padding: 12px 20px;
+    margin: 18px auto 10px auto;
     width: fit-content;
     border-radius: 10px;
-    font-weight: bold;
-    font-size: 1.15em;
-    box-shadow: 0 2px 12px rgba(255, 68, 68, 0.12);
+    font-weight: 800;
+    font-size: 1.02em;
+    box-shadow: 0 6px 28px rgba(255,80,80,0.04);
     text-align: center;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
+}
+
+/* small success message style */
+.success {
+    color: var(--accent-2);
+    background: linear-gradient(90deg, rgba(110,193,228,0.06), rgba(110,193,228,0.02));
+    border: 1px solid rgba(110,193,228,0.08);
+    padding: 10px 16px;
+    border-radius: 10px;
+    margin: 12px auto;
+    font-weight: 700;
 }

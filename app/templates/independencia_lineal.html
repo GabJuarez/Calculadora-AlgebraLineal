@@ -1,1 +1,107 @@
-{%extends base%}
+{% extends 'base.html' %}
+
+{% block title %}Independencia Lineal{% endblock %}
+
+{% block body %}
+<h1 class="titulo_matriz">Comprobación de Independencia Lineal</h1>
+<div>
+    {% include '_entrada_vectores.html' %}
+</div>
+
+{% if error %}
+    <div class="error">{{ error }}</div>
+{% endif %}
+
+{% if resultado is not none %}
+    <h2 class="titulo_matriz">Matriz reducida (RREF):</h2>
+    <table class="matriz_resultado">
+        <thead>
+            <tr>
+                {# asumimos que cada fila tiene el mismo número de columnas #}
+                {% if resultado.matriz_reducida and resultado.matriz_reducida[0] %}
+                    {% for _ in range(resultado.matriz_reducida[0]|length) %}
+                        <th></th>
+                    {% endfor %}
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for fila in resultado.matriz_reducida %}
+        <tr>
+            {% for celda in fila %}
+            <td>{{ celda }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {# Nuevo resumen estilizado con layout en fila #}
+    <div class="panel-resultado resumen-panel">
+        <h3 class="titulo-resultado">Resumen</h3>
+        {% set estado = resultado.resultado[0] if resultado.resultado else '' %}
+        {% set explicacion = resultado.resultado[1] if resultado.resultado|length > 1 else '' %}
+        {% set vectores_text = resultado.resultado[2] if resultado.resultado|length > 2 else '' %}
+
+        <div class="resumen-row">
+            <div class="resumen-status {% if estado == 'Independientes' %}resumen-success{% elif estado == 'Dependientes' %}resumen-danger{% else %}resumen-neutral{% endif %}">
+                <span class="resumen-icon">{% if estado == 'Independientes' %}✔{% elif estado == 'Dependientes' %}✖{% else %}ℹ{% endif %}</span>
+                <span class="resumen-text">{{ estado }}</span>
+            </div>
+
+            <div class="resumen-body">
+                {% if explicacion %}
+                    <div class="resumen-explanation">{{ explicacion }}</div>
+                {% endif %}
+
+                {% if vectores_text %}
+                    {# intentar extraer contenido entre corchetes para mostrar badges #}
+                    {% if '[' in vectores_text and ']' in vectores_text %}
+                        {% set inner = vectores_text.split('[')[1].split(']')[0] %}
+                        {% set items = inner.split(',') %}
+                        <div class="resumen-vectors">
+                            {% for it in items %}
+                                <span class="vector-badge">{{ it.strip() }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="resumen-vectors">{{ vectores_text }}</div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if pasos %}
+    <h2 class="titulo_matriz">Pasos intermedios:</h2>
+    <ul class="pasos">
+        {% for paso in pasos %}
+        <li>
+            {{ format_paso(paso[0])|safe }}
+            <table class="matriz_resultado">
+                <thead>
+                    <tr>
+                        {% if paso[1] and paso[1][0] %}
+                            {% for _ in range(paso[1][0]|length) %}
+                                <th></th>
+                            {% endfor %}
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for fila in paso[1] %}
+                    <tr>
+                    {% for celda in fila %}
+                        <td>{{ celda }}</td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}

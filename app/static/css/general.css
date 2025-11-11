@@ -1,13 +1,30 @@
+:root{
+    --bg-900: #0f1720;
+    --bg-800: #101216;
+    --panel-800: #232946;
+    --panel-700: #393e6c;
+    --accent: #6EC1E4;
+    --accent-2: #A7E3C2;
+    --muted: #9fb7b0;
+    --gold: #FFD966;
+    --danger: #FF6B6B;
+    --glass: rgba(255,255,255,0.02);
+    --panel-border: rgba(110,193,228,0.07);
+    --radius: 12px;
+}
+
 html, body {
     height: 100%;
 }
 body {
-    background: linear-gradient(120deg, #232946 0%, #1a1a2e 100%) fixed;
-    background-color: #101216; /* fallback solid color to avoid white gaps while gradient paints */
+    background: linear-gradient(120deg, var(--panel-800) 0%, var(--bg-800) 100%) fixed;
+    background-color: var(--bg-800); /* fallback solid color */
     font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
     color: #F4F4F6;
     min-height: 100vh;
     margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* reduce default top margin for headings inside the biseccion page to avoid a big band */
@@ -26,21 +43,19 @@ h1, h2 {
     font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
     font-weight: 700;
     letter-spacing: 2px;
-    text-shadow: 0 2px 16px #23294699;
+    text-shadow: 0 2px 16px rgba(35,41,70,0.6);
 }
-h1 {
-    font-size: 2.8em;
+h1 { font-size: 2.4rem; }
+h2 { font-size: 1.8rem; margin-top: 24px; }
+
+label { color: #F4F4F6; margin: 0 10px; font-size: 1.05em; font-weight: 600; }
+
+/* Reduce very large gaps on small screens */
+@media (max-width: 720px){
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.3rem; }
 }
-h2 {
-    font-size: 2em;
-    margin-top: 24px;
-}
-label {
-    color: #F4F4F6;
-    margin: 0 10px;
-    font-size: 1.08em;
-    font-weight: 500;
-}
+
 .menu-principal {
     display: flex;
     justify-content: center;
@@ -179,113 +194,37 @@ hr {
     width: 80%;
 }
 
-/* Estilos para la sección de ventajas: tarjetas responsivas que respetan la paleta existente */
-.ventajas-grid{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    width: 100%;
-    align-items: start;
-}
-
-.feature-card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-    border-left: 4px solid #6EC6CA; /* acento existente */
-    padding: 14px 16px;
+/* Unified button utilities */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
     border-radius: 10px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
-    color: #F4F4F6;
-    line-height: 1.45;
-    transition: transform 160ms ease, box-shadow 160ms ease;
-    min-height: 140px; /* altura minima para uniformidad */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+    border: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer;
+    font-weight: 700;
+}
+.btn-primary {
+    background: linear-gradient(90deg,var(--accent) 0%, #4AA3D6 100%);
+    color: #06202a;
+    box-shadow: 0 10px 28px rgba(74,163,214,0.12);
+    border-color: rgba(255,255,255,0.02);
+}
+.btn-ghost {
+    background: transparent;
+    color: var(--accent-2);
+    border: 1px solid rgba(255,255,255,0.04);
 }
 
-.feature-card strong{
-    display: block;
-    color: #6EC6CA;
-    margin-bottom: 6px;
-    font-size: 1.02em;
-}
+/* small helpers */
+.kv { display: flex; gap: 8px; align-items: center; }
+.monospace { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; }
 
-.feature-card p{
-    margin: 0;
-    font-size: 0.98em;
-    color: #E8F6F5;
-}
-
-.feature-card:hover,
-.feature-card:focus-within{
-    transform: translateY(-6px);
-    box-shadow: 0 14px 34px rgba(0,0,0,0.26);
-}
-
-/* Contenedor general para ventajas: agrupa las tarjetas y el párrafo final dentro de un cuadro */
-.ventajas-container{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    background: linear-gradient(180deg, rgba(37,50,83,0.28), rgba(37,50,83,0.18));
-    border: 1px solid rgba(110,198,202,0.12);
-    border-radius: 14px;
-    padding: 32px 28px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.22);
-    margin: 18px 0 28px 0;
-    box-sizing: border-box;
-    align-items: stretch;
-    align-self: stretch;
-    min-height: 420px; /* altura mínima para que el cuadro se vea proporcionado */
-    justify-content: center; /* centrar verticalmente el contenido */
-}
-
-/* Ajustes para que la lista interna no tenga padding extra */
-.ventajas-container .caracteristicas{
-    padding-left: 0;
-    margin: 0; /* eliminamos margin-bottom aquí para controlar el espacio con gap */
-    width: 100%;
-}
-
-/* Establecer comportamiento del grid para que las tarjetas ocupen columnas y no se apilen en una sola columna innecesariamente */
-.ventajas-grid{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* columnas más anchas por defecto */
-    gap: 16px;
-    padding: 0;
-    margin: 0; /* controlamos separación con el gap del contenedor */
-    list-style: none;
-    width: 100%;
-    align-items: start;
-    align-self: stretch; /* asegurar que la rejilla ocupe todo el ancho dentro del contenedor */
-}
-
-/* Párrafo al final dentro del cuadro: ahora ocupa todo el ancho y luce como una tarjeta coherente */
-.ventajas-footer{
-    margin: 0;
-    padding: 16px 18px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-    border-radius: 10px;
-    color: #E8F6F5;
-    font-size: 1em;
-    line-height: 1.6;
-    border-left: 4px solid #6EC6CA; /* mismo acento que las tarjetas */
-    width: 100%;
-    box-sizing: border-box;
-    display: block;
-    text-align: left;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
-}
-
-/* Asegurar coherencia entre espacios internos y la rejilla */
-.ventajas-container{ gap: 20px; padding: 22px; }
-.ventajas-grid{ gap: 18px; }
-
+/* Slightly reduce large paddings on panel-principal on small screens */
 @media (max-width: 900px){
+    .panel-principal { padding: 36px 28px; }
     /* en pantallas intermedias, permitir que las tarjetas sigan en 1-2 columnas */
     .ventajas-grid{ grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
     .ventajas-container{ min-height: 340px; padding: 22px 10px; }
@@ -299,3 +238,26 @@ hr {
     .ventajas-container{ min-height: 0; padding: 12px 4px; }
     .ventajas-footer{ padding: 12px; font-size: 0.97em; }
 }
+
+/* Smooth transitions for interactive elements */
+button, a, input, select, textarea {
+    transition: all 0.14s ease;
+}
+
+/* Accessible focus outlines */
+:focus {
+    outline: none;
+}
+:focus-visible {
+    outline: 3px solid rgba(110,193,228,0.22);
+    outline-offset: 2px;
+    border-radius: var(--radius);
+}
+
+/* Buttons and links keyboard focus clarity */
+button:focus-visible, a:focus-visible {
+    box-shadow: 0 0 0 4px rgba(110,193,228,0.08);
+}
+
+/* Slightly larger clickable areas for controls */
+button, .menu-boton, .panel-lista a { padding: 10px; }

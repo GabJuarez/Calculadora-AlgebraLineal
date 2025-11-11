@@ -13,52 +13,74 @@
 {% endif %}
 
 {% if resultado %}
-    <h2 class="titulo_matriz">Matriz Inversa:</h2>
-    <div class="matriz-label-final">A⁻¹</div>
-    <table class="matriz_resultado">
-        <tbody>
-        {% for fila in resultado.inversa %}
-        <tr>
-            {% for celda in fila %}
-            <td>{{ celda }}</td>
+    <div class="panel-resultado">
+        <h3 class="titulo-resultado">Matriz Inversa</h3>
+        <div class="matriz-label-final">A⁻¹</div>
+        <table class="matriz_resultado">
+            <tbody>
+            {% for fila in resultado.inversa %}
+            <tr>
+                {% for celda in fila %}
+                <td>{{ celda }}</td>
+                {% endfor %}
+            </tr>
             {% endfor %}
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 {% endif %}
 
 {% if pasos %}
     <h2 class="titulo_matriz">Paso a paso:</h2>
     <ul class="pasos">
         {% for paso in pasos %}
-        <li><strong>{{ paso[0] }}</strong>
-            {% if paso[0] == 'Matriz inversa obtenida' %}
-                <div class="matriz-label">A⁻¹</div>
-                <table class="matriz_resultado">
-                <tbody>
-                {% for fila in paso[1] %}
-                    <tr>
-                        {% for celda in fila %}
-                        <td>{{ celda }}</td>
+        <li>
+            {% if paso is string %}
+                {% if 'Matriz' in paso or '[' in paso %}
+                    {% if ':' in paso %}
+                        {% set label = paso.split(':',1)[0] %}
+                        {% set matriz_text = paso.split(':',1)[1] %}
+                    {% else %}
+                        {% set label = '' %}
+                        {% set matriz_text = paso %}
+                    {% endif %}
+                    {% if label %}
+                        <div class="matriz-label-final">{{ label }}</div>
+                    {% endif %}
+                    {% set m = matriz_text.replace("'", '') %}
+                    {% set m = m.replace('[[', '[').replace(']]', ']') %}
+                    {% set m = m.replace('], [', ']|[') %}
+                    <table class="matriz_resultado">
+                        <tbody>
+                        {% for fila in m.split('|') %}
+                            <tr>
+                            {% for val in fila.replace('[','').replace(']','').split(',') %}
+                                <td>{{ val.strip().replace('"','') }}</td>
+                            {% endfor %}
+                            </tr>
                         {% endfor %}
-                    </tr>
-                {% endfor %}
-                </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                {% else %}
+                    {{ format_paso(paso)|safe }}
+                {% endif %}
             {% else %}
-                <div class="matriz-label">Matriz aumentada [I | A⁻¹]</div>
-                <table class="matriz_resultado">
-                <tbody>
-                {% for fila in paso[1] %}
-                    <tr>
-                        {% for celda in fila %}
-                        <td>{{ celda }}</td>
+                {% set text = paso[0] %}
+                {% set mat = paso[1] %}
+                {{ format_paso(text)|safe }}
+                {% if mat %}
+                    <table class="matriz_resultado">
+                        <tbody>
+                        {% for fila in mat %}
+                            <tr>
+                            {% for celda in fila %}
+                                <td>{{ celda }}</td>
+                            {% endfor %}
+                            </tr>
                         {% endfor %}
-                    </tr>
-                {% endfor %}
-                </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                {% endif %}
             {% endif %}
         </li>
         {% endfor %}

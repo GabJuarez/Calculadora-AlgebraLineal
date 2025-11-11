@@ -1,11 +1,12 @@
 .pasos {
     margin: 42px auto 0 auto;
     width: 96%;
-    background: linear-gradient(120deg, #232946 0%, #393e6c 100%);
+    /* dejar el fondo del contenedor transparente para que cada paso tenga su propio panel */
+    background: transparent;
     border-radius: 16px;
-    box-shadow: 0 4px 18px rgba(34, 46, 52, 0.13);
-    padding: 28px 38px;
-    border: 1.5px solid #A7E3C2;
+    box-shadow: none;
+    padding: 28px 18px;
+    border: none;
     animation: fadeInPasos 0.7s ease-in;
     display: flex;
     flex-direction: column;
@@ -24,34 +25,98 @@
     flex-direction: column;
     align-items: center;
 }
+/* Centrar visualmente cada elemento de la lista de pasos */
 .pasos li {
     color: #ffffff;
-    text-align: center;
-    margin-bottom: 26px;
-    font-size: 1.18em;
-    font-weight: bold;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #393e6c;
+    text-align: center;           /* texto centrado */
+    margin-bottom: 18px;
+    font-size: 1.16em;
+    font-weight: 700; /* aumentar peso para que las notaciones cortas resalten */
+    padding: 14px 18px;
+    border-bottom: none;
     list-style-type: none;
-    background: #393e6c;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px #23294622;
-    transition: background 0.2s, color 0.2s;
-    padding-top: 12px;
-    width: 80%;
+    background: linear-gradient(180deg, rgba(36,41,70,0.95) 0%, rgba(28,31,52,0.98) 100%);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(8,14,30,0.35);
+    transition: background 0.18s, color 0.18s, transform 0.12s;
+    width: 86%;
     margin-left: auto;
     margin-right: auto;
-    display: flex;
-    flex-direction: column;
+    display: block; /* keep block so table flows under pills */
+    border: 1px solid rgba(110,193,228,0.07); /* mismo borde sutil que el panel */
+}
+
+/* pills container centering (explicit) */
+.pasos li .pills-row {
+    display: inline-flex;
+    gap: 10px;
     align-items: center;
+    justify-content: center; /* force center */
+    flex-wrap: wrap;
+    width: 100%;
 }
-.pasos li:last-child {
-    border-bottom: none;
+
+/* Asegurar que prefijo y resto se vean con el mismo énfasis (negrita) */
+.pasos li .paso-prefix,
+.pasos li .paso-rest,
+.pasos li strong {
+    font-weight: 800 !important;
 }
+
+/* ensure strong inside pasos is bold and visible */
+.pasos li strong {
+    font-weight: 900;
+    color: var(--accent-2);
+}
+
+/* Pill common styles */
+.paso-prefix, .paso-rest {
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease, background 0.12s ease;
+    cursor: default;
+}
+
+.paso-prefix {
+    background: linear-gradient(90deg, #274156 0%, #2d6a88 100%);
+    color: #E6FFF2;
+    border: 1px solid rgba(110,193,228,0.16);
+    box-shadow: 0 6px 18px rgba(13,24,36,0.12);
+}
+
+.paso-rest {
+    color: #E6FFF2;
+    background: linear-gradient(90deg, rgba(110,193,228,0.06), rgba(110,193,228,0.02));
+    border: 1px solid rgba(110,193,228,0.08);
+    box-shadow: none;
+    max-width: 76%; /* limit width so pills don't span entire card */
+    white-space: normal; /* allow wrap */
+    text-overflow: ellipsis;
+}
+
+/* Hover/active effects for pills */
+.paso-prefix:hover, .paso-rest:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(6,12,26,0.28);
+    opacity: 0.98;
+}
+
+/* separate table from pills */
+.pasos li .matriz_resultado {
+    margin-top: 14px; /* more breathing room */
+}
+
 .pasos li:hover {
-    background: #314a6e;
-    color: #F4F4F6;
+    transform: translateY(-4px);
+    background: linear-gradient(180deg, rgba(46,60,90,0.98) 0%, rgba(36,42,70,0.98) 100%);
 }
+
+/* mantener strong si aparece en otros lugares */
 .pasos strong {
     color: #A7E3C2;
     font-weight: bold;
@@ -87,3 +152,72 @@
     font-weight: bold;
     transition: background 0.2s;
 }
+
+/* Formato para texto de pasos: prefix (antes de ':') y resto */
+.paso-prefix {
+    /* estilo refinado: píldora azul-teal oscura para buen contraste y elegancia */
+    display: inline-block;
+    background: linear-gradient(90deg, #274156 0%, #2d6a88 100%);
+    color: #E6FFF2; /* texto claro */
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: 999px; /* pill */
+    border: 1px solid rgba(110,193,228,0.16);
+    box-shadow: 0 6px 18px rgba(13,24,36,0.18);
+    margin-right: 10px;
+    font-size: 1.02em;
+    letter-spacing: 0.4px;
+    text-transform: none;
+}
+.paso-rest {
+    color: #E6FFF2;
+    font-weight: 700; /* ahora en negrita para consistencia */
+    display: inline-block;            /* pill */
+    max-width: 86%;
+    padding: 6px 12px;
+    margin: 8px auto 0 auto;   /* centrar horizontalmente */
+    text-align: center;        /* centrar texto dentro del pill */
+    line-height: 1.45;
+    border-radius: 999px; /* pill */
+    background: linear-gradient(90deg, rgba(110,193,228,0.06), rgba(110,193,228,0.02));
+    border: 1px solid rgba(110,193,228,0.08);
+    box-shadow: none;
+    white-space: normal; /* permitir wrap si es muy largo */
+}
+
+/* Resaltar etiquetas dentro del texto si vienen en mayúsculas o entre corchetes */
+.paso-prefix, .matriz-label-final, .matriz-label {
+    text-transform: none;
+}
+
+/* asegurar responsividad en pantallas pequeñas */
+@media (max-width: 720px) {
+    .pasos li { width: 96%; padding: 12px; }
+    .paso-rest { max-width: 100%; padding: 6px 10px; }
+    .paso-prefix { padding: 5px 8px; }
+}
+
+/* Cramer-specific pills centering */
+.cramer-pasos .pills-row {
+    display: inline-flex;
+    gap: 18px;
+    justify-content: center !important;
+    align-items: center;
+    width: auto; /* shrink to content so group centers as one */
+    margin: 0 auto;
+}
+.cramer-pasos .paso-prefix, .cramer-pasos .paso-rest {
+    max-width: 82%;
+    margin: 0 !important; /* override auto margins to keep pills together */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Stronger selector to override generic rules and ensure pills-row shrinks to contents in Cramer */
+.pasos.cramer-pasos li .pills-row {
+    width: auto !important;
+    margin: 0 auto !important;
+    display: inline-flex !important;
+}
+.pasos.cramer-pasos li { text-align: center; }
