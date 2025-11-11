@@ -1,15 +1,15 @@
 <form method="post">
     <div class="form_matriz">
-        <label for="filas">Filas:</label>
+        <label for="filas">Número de entradas:</label>
         <input type="number" id="filas" name="filas" value="3" min="1" max="10" step="1">
-        <label for="columnas">Columnas:</label>
+        <label for="columnas">Número de vectores:</label>
         <input type="number" id="columnas" name="columnas" value="3" min="1" max="10" step="1">
     </div>
     <div id="matriz"></div>
     <div class="botones-formulario">
         <button type="button" class="boton_volver" onclick="window.location.href='/'">Página Principal</button>
         <button type="submit" class="boton_calcular">Calcular</button>
-        <button type="reset" class="limpiar_matriz" onclick="generarMatriz()">Limpiar Matriz</button>
+        <button type="reset" class="limpiar_matriz" onclick="generarMatriz()">Limpiar Vectores</button>
     </div>
 </form>
 <script src="{{ url_for('static', filename='js/entrada_matrices.js') }}"></script>

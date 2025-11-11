@@ -9,9 +9,11 @@
 
     </div>
     <div id="matriz"></div>
-    <button type="button" class="boton_volver" onclick="window.location.href='/'">Página Principal</button>
-    <button type="submit" class="boton_calcular">Calcular</button>
-    <button type="reset" class="limpiar_matriz" onclick="generarMatriz()">Limpiar Matriz</button>
+    <div class="botones-formulario">
+        <button type="button" class="boton_volver" onclick="window.location.href='/'">Página Principal</button>
+        <button type="submit" class="boton_calcular">Calcular</button>
+        <button type="reset" class="limpiar_matriz" onclick="generarMatriz()">Limpiar Matriz</button>
+    </div>
 </form>
 <script src="{{ url_for('static', filename='js/entrada_matrices.js') }}"></script>
 <script>
