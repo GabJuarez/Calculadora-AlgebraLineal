@@ -3,8 +3,8 @@
 {% block title %}Falsa Posicion{% endblock %}
 
 {% block body %}
-<h1 class="titulo_matriz">Método de Bisección</h1>
-<form method="post" action="{{ url_for('routes_bp.falsa_posicion_view') }}" class="formulario_biseccion">
+<h1 class="titulo_matriz">Método de Falsa Posición</h1>
+<form method="post" action="{{ url_for('routes_bp.falsa_posicion_view') }}" class="formulario_biseccion" data-preview-url="{{ url_for('routes_bp.falsa_posicion_preview') }}">
     <div class="formulario_biseccion_campos">
         <div class="campo_biseccion">
             <label for="funcion">f(x):</label>
@@ -27,8 +27,8 @@
 </form>
 
 <!-- Live preview plot (client-side) -->
-<div id="biseccion_preview_container" style="margin-top:20px;">
-    <div id="biseccion_preview_plot" class="biseccion-preview hidden"></div>
+<div id="preview_container" style="margin-top:20px;">
+    <div id="preview_plot" class="biseccion-preview hidden"></div>
 </div>
 
 {% if plot_data or resultado %}
@@ -56,6 +56,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.9.0/math.min.js"></script>
 <script src="https://cdn.plot.ly/plotly-2.32.1.min.js"></script>
-<script src="{{ url_for('static', filename='js/biseccion_preview.js') }}"></script>
+<script src="{{ url_for('static', filename='js/previews.js') }}"></script>
 
 {% endblock %}
