@@ -4,6 +4,71 @@ funciones auxiliares para operaciones de algebra lineal
 import re
 import unicodedata
 from fractions import Fraction
+import ast
+import math
+from typing import Any
+
+# nombres de math permitidos para evaluaciones seguras
+_NOMBRES_MATH = {name for name in dir(math) if not name.startswith("_")}
+_NOMBRES_PERMITIDOS = _NOMBRES_MATH | {"x"}
+
+# operadores permitidos para binarios y unarios
+_ALLOWED_BINOPS = (ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Pow, ast.Mod, ast.FloorDiv)
+_ALLOWED_UNARYOPS = (ast.UAdd, ast.USub)
+
+def validar_nodo(node: ast.AST) -> None:
+    """
+    Valida recursivamente un nodo AST para asegurar que sólo contiene elementos permitidos
+    (operadores, llamadas a funciones de math y la variable `x`). Lanza ValueError en caso
+    contrario.
+    """
+    if isinstance(node, ast.Expression):
+        validar_nodo(node.body)
+    elif isinstance(node, ast.BinOp):
+        if not isinstance(node.op, _ALLOWED_BINOPS):
+            raise ValueError("Operador binario no permitido")
+        validar_nodo(node.left)
+        validar_nodo(node.right)
+    elif isinstance(node, ast.UnaryOp):
+        if not isinstance(node.op, _ALLOWED_UNARYOPS):
+            raise ValueError("Operador unario no permitido")
+        validar_nodo(node.operand)
+    elif isinstance(node, ast.Call):
+        # solo llamadas directas a nombres (sin atributos)
+        if not isinstance(node.func, ast.Name):
+            raise ValueError("Solo se puede llamar directamente a funciones permitidas")
+        nombre = node.func.id
+        if nombre not in _NOMBRES_PERMITIDOS:
+            raise ValueError(f"Función '{nombre}' no permitida")
+        for arg in node.args:
+            validar_nodo(arg)
+        if node.keywords:
+            raise ValueError("Argumentos por palabra clave no permitidos")
+    elif isinstance(node, ast.Name):
+        if node.id not in _NOMBRES_PERMITIDOS:
+            raise ValueError(f"Nombre '{node.id}' no permitido")
+    elif isinstance(node, ast.Constant):
+        if not isinstance(node.value, (int, float)):
+            raise ValueError("Sólo constantes numéricas permitidas")
+    elif isinstance(node, ast.Num):  # compatibilidad con versiones antiguas
+        return
+    else:
+        raise ValueError(f"Elemento de expresión {type(node).__name__} no permitido. No se permiten conjuntos (llaves) ni expresiones con llaves en la función. Por favor, ingrese una expresión matemática válida.")
+
+
+def evaluar(funcion: str, x: Any) -> float:
+    """
+    Evalúa la función (string) con un valor dado x de forma segura.
+    Convierte la sintaxis mediante `transformar_sintaxis`, parsea a AST, valida y evalúa
+    usando únicamente el módulo math y la variable x en el entorno.
+    """
+    expr = transformar_sintaxis(funcion)
+    tree = ast.parse(expr, mode="eval")
+    validar_nodo(tree)
+    env = {name: getattr(math, name) for name in _NOMBRES_MATH}
+    env["x"] = x
+    return float(eval(compile(tree, filename="<ast>", mode="eval"), {"__builtins__": None}, env))
+
 
 def validar_matriz(matriz):
     """Valida que la matriz sea una lista de listas de numeros y que sea rectangular

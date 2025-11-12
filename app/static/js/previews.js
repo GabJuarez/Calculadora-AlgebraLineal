@@ -39,9 +39,9 @@
         try{ const fun = new Function('x','with(Math){ return '+expr+' }'); return fun(x); }catch(e){ return NaN; }
     }
 
-    async function serverPreviewRequest(){
+    async function serverPreviewRequest(previewUrl){
         const form = new FormData(); form.append('funcion', by('funcion').value||''); form.append('limite_inferior', by('limite_inferior').value||''); form.append('limite_superior', by('limite_superior').value||'');
-        try{ const r = await fetch('/biseccion/preview',{method:'POST', body: form}); if(!r.ok){ const d = await r.json(); console.warn('server preview error',d); return null; } const d=await r.json(); return d.plot_data; }catch(e){ console.warn('server preview fetch failed',e); return null; }
+        try{ const r = await fetch(previewUrl || '/biseccion/preview',{method:'POST', body: form}); if(!r.ok){ const d = await r.json(); console.warn('server preview error',d); return null; } const d=await r.json(); return d.plot_data; }catch(e){ console.warn('server preview fetch failed',e); return null; }
     }
 
     async function makePreview(){
@@ -62,17 +62,22 @@
             const shapes = [];
             if(res.crossing!=null){ shapes.push({type:'line', x0:res.crossing, x1:res.crossing, y0:Math.min(...res.ys.filter(v=>isFinite(v))), y1:Math.max(...res.ys.filter(v=>isFinite(v))), line:{color:'#ff7f0e', dash:'dot'}}); }
             const layout = { title:{text:'Vista previa de f(x)'}, plot_bgcolor:'rgba(0,0,0,0)', paper_bgcolor:'rgba(0,0,0,0)', xaxis:{title:'x'}, yaxis:{title:'f(x)'}, shapes:shapes };
-            const plotDiv = by('biseccion_preview_plot'); plotDiv.innerHTML=''; plotDiv.classList.remove('hidden');
+            // try generic id then fallback to legacy biseccion id
+            const plotDiv = by('preview_plot') || by('biseccion_preview_plot'); plotDiv.innerHTML=''; plotDiv.classList.remove('hidden');
             await Plotly.react(plotDiv,[trace,zeroLine],layout,{responsive:true});
             // save PNG into hidden input
             try{ const dataUrl = await Plotly.toImage(plotDiv,{format:'png', width:1000, height:420}); const b64 = dataUrl.split(',')[1]; by('preview_image').value = b64; }catch(e){ console.warn('no png from plotly',e); }
             return;
         }
         // fallback: ask server to prepare PNG (and it will detect crossing when interval absent)
-        const b64 = await serverPreviewRequest(); if(b64){ by('preview_image').value = b64; const plotDiv=by('biseccion_preview_plot'); plotDiv.innerHTML=''; const img=new Image(); img.src='data:image/png;base64,'+b64; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='contain'; plotDiv.appendChild(img); plotDiv.classList.remove('hidden'); }
+        // read preview endpoint from form dataset if present
+        const formEl = document.querySelector('form.formulario_biseccion');
+        const previewUrl = formEl && formEl.dataset && formEl.dataset.previewUrl ? formEl.dataset.previewUrl : null;
+        const b64 = await serverPreviewRequest(previewUrl);
+        if(b64){ by('preview_image').value = b64; const plotDiv = by('preview_plot') || by('biseccion_preview_plot'); plotDiv.innerHTML=''; const img=new Image(); img.src='data:image/png;base64,'+b64; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='contain'; plotDiv.appendChild(img); plotDiv.classList.remove('hidden'); }
     }
 
-    function hidePreview(){ const d=by('biseccion_preview_plot'); if(d){ d.classList.add('hidden'); d.innerHTML=''; } }
+    function hidePreview(){ const d = by('preview_plot') || by('biseccion_preview_plot'); if(d){ d.classList.add('hidden'); d.innerHTML=''; } }
 
     document.addEventListener('DOMContentLoaded', function(){
         const btn = by('btn_preview'); if(btn) btn.classList.add('styled-preview');

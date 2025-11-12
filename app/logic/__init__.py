@@ -6,3 +6,5 @@ from .eliminacion_gaussiana import eliminacion_gaussiana
 from .traspuesta import traspuesta
 from .determinante import calcular_determinante, matriz_triangular
 from .biseccion import biseccion
+from .falsa_posicion import falsa_posicion
+from .operaciones_matrices import operar_matrices
