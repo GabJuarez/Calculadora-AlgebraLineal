@@ -198,7 +198,6 @@
 .biseccion-preview .plotly,
 .biseccion-preview svg {
     background: transparent !important;
-    background-color: transparent !important;
 }
 
 /* Also remove any margins so the plot uses full container */
@@ -261,4 +260,53 @@
     border-radius: 8px;
     border: 1px solid rgba(58,65,87,0.6);
     box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+/* Reglas específicas para la plantilla Newton-Raphson (movidas desde newton_raphson.html) */
+/* Estas reglas mejoran el comportamiento responsive del formulario en la vista de Newton */
+.formulario_biseccion {
+  /* override local: permitir más espacio en pantallas grandes para Newton-Raphson */
+  max-width: 100%;
+  width: auto;
+  padding: 36px 28px;
+}
+.formulario_biseccion_campos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  align-items: flex-start;
+  justify-content: flex-start; /* evitar estirado que provoca overflow */
+  box-sizing: border-box;
+}
+.campo_biseccion {
+  flex: 1 1 160px; /* crecer, encoger, base 160px */
+  min-width: 120px; /* reducir mínimo para que quepan en pantallas estrechas */
+  box-sizing: border-box;
+}
+.campo_biseccion label {
+  display:block;
+  margin-bottom: .4rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.input_biseccion {
+  width: 100%;
+  box-sizing: border-box;
+}
+.botones_biseccion {
+  display:flex;
+  flex-direction:column;
+  gap: 1rem;
+  align-items:center;
+  margin-top: 1.25rem;
+}
+@media (min-width:720px) {
+  .botones_biseccion { flex-direction: row; justify-content:center; }
+  .botones_biseccion .btn, .botones_biseccion .boton_volver { min-width: 160px; }
+}
+/* En pantallas muy pequeñas colocamos los campos en columna */
+@media (max-width:640px) {
+  .formulario_biseccion_campos { flex-direction: column; gap: 12px; }
+  .campo_biseccion { min-width: auto; }
 }

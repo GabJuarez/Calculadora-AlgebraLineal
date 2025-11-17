@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Newton-Raphson{% endblock %}
+
+{% block body %}
+<h1 class="titulo_matriz">Newton-Raphson</h1>
+
+<!-- Las reglas CSS específicas se movieron a app/static/css/biseccion.css -->
+
+<form method="post" action="{{ url_for('routes_bp.newton_view') }}" class="formulario_biseccion" data-preview-url="{{ url_for('routes_bp.newton_preview') }}">
+    <div class="formulario_biseccion_campos">
+        <div class="campo_biseccion">
+            <label for="funcion">f(x):</label>
+            <input type="text" id="funcion" name="funcion" value="{{ funcion|default('') }}" required class="input_biseccion">
+        </div>
+        <div class="campo_biseccion">
+            <label for="x0">Valor inicial x0:</label>
+            <input type="text" id="x0" name="x0" value="{{ x0|default('') }}" class="input_biseccion">
+        </div>
+        <div class="campo_biseccion">
+            <label for="limite_inferior">Límite Inferior:</label>
+            <input type="text" id="limite_inferior" name="limite_inferior" value="{{ limite_inferior|default('') }}" class="input_biseccion">
+        </div>
+        <div class="campo_biseccion">
+            <label for="limite_superior">Límite Superior:</label>
+            <input type="text" id="limite_superior" name="limite_superior" value="{{ limite_superior|default('') }}" class="input_biseccion">
+        </div>
+    </div>
+    <input type="hidden" name="preview_image" id="preview_image" value="">
+    <div class="botones_biseccion">
+        <button type="submit" class="btn btn-primary boton_calcular">Calcular</button>
+        <button type="button" class="boton_volver" onclick="window.location.href='/'">Página Principal</button>
+    </div>
+</form>
+
+<!-- Live preview plot (client-side) -->
+<div id="preview_container" style="margin-top:20px;">
+    <div id="preview_plot" class="biseccion-preview hidden"></div>
+</div>
+
+{% if plot_data or resultado %}
+  <div class="panel-resultado">
+    {% if plot_data %}
+      <h3 class="titulo-resultado">Gráfico f(x)</h3>
+      <div class="grafico_contendor">
+        <img src="data:image/png;base64,{{ plot_data }}" alt="Grafico de la funcion" class="grafico-fx">
+      </div>
+    {% endif %}
+
+    {% if resultado %}
+      <h3 class="titulo-resultado">Resultado</h3>
+      <p class="resultado_texto"><strong>Raíz aproximada:</strong> {{ resultado.raiz }}</p>
+      <p class="resultado_texto"><strong>f(raíz):</strong> {{ resultado.f_en_raiz }}</p>
+      <p class="resultado_texto"><strong>Iteraciones:</strong> {{ resultado.iteraciones }}</p>
+      <h3 class="titulo-resultado">Tabla de pasos</h3>
+      <div class="tabla-resultados estilizada">{{ resultado.tabla|safe }}</div>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.9.0/math.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.32.1.min.js"></script>
+<script src="{{ url_for('static', filename='js/previews.js') }}"></script>
+
+{% endblock %}

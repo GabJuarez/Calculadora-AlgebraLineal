@@ -270,7 +270,7 @@ def falsa_posicion_view():
             preview_image_b64 = request.form.get('preview_image', '')
             if preview_image_b64:
                 plot_data = preview_image_b64
-                # if limits empty, try to detect interval like in biseccion_view
+                # If limits are empty, try to detect an interval to use for the algorithm like in biseccion
                 if not limite_inferior or not limite_superior:
                     try:
                         li, ls = generar_grafico_por_defecto(funcion)
@@ -298,6 +298,54 @@ def falsa_posicion_view():
 
 @routes_bp.route('/falsa_posicion/preview', methods=['POST'])
 def falsa_posicion_preview():
+    try:
+        funcion = request.form.get('funcion', '').strip()
+        limite_inferior = request.form.get('limite_inferior', '').strip()
+        limite_superior = request.form.get('limite_superior', '').strip()
+        if not funcion:
+            return jsonify({'error': 'Función vacía'}), 400
+        plot_data = generate_preview_plot_for_function(funcion, limite_inferior, limite_superior, n_points=800)
+        return jsonify({'plot_data': plot_data})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@routes_bp.route('/newton', methods=['GET', 'POST'])
+def newton_view():
+    resultado = None
+    error = None
+    pasos = None
+    plot_data = None
+    funcion = ''
+    x0 = ''
+    limite_inferior = ''
+    limite_superior = ''
+    if request.method == 'POST':
+        try:
+            funcion = request.form.get('funcion', '').strip()
+            x0 = request.form.get('x0', '').strip()
+            limite_inferior = request.form.get('limite_inferior', '').strip()
+            limite_superior = request.form.get('limite_superior', '').strip()
+            preview_image_b64 = request.form.get('preview_image', '')
+            if preview_image_b64:
+                plot_data = preview_image_b64
+            else:
+                try:
+                    plot_data = generate_preview_plot_for_function(funcion, limite_inferior, limite_superior, n_points=401)
+                except Exception:
+                    plot_data = None
+
+            from app.logic.newton_raphson import newton_raphson as _newton
+            raiz, tabla, iteraciones, f_en_raiz = _newton(funcion, x0)
+            resultado = {'raiz': raiz, 'tabla': tabla, 'iteraciones': iteraciones, 'f_en_raiz': f_en_raiz}
+        except Exception as e:
+            error = str(e)
+    return render_template('newton_raphson.html', resultado=resultado, error=error, pasos=pasos,
+                           funcion=funcion, x0=x0, plot_data=plot_data,
+                           limite_inferior=limite_inferior, limite_superior=limite_superior)
+
+
+@routes_bp.route('/newton/preview', methods=['POST'])
+def newton_preview():
     try:
         funcion = request.form.get('funcion', '').strip()
         limite_inferior = request.form.get('limite_inferior', '').strip()

@@ -11,3 +11,4 @@ from .logic import operar_matrices
 from .web_utils import matriz_desde_formulario
 from .web_utils import generate_preview_plot_for_function
 from .web_utils import generar_grafico_por_defecto
+from .logic import newton_raphson
