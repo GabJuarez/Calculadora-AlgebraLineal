@@ -3,6 +3,7 @@ from typing import Any
 from app.logic.utils import transformar_sintaxis, parse_input_number, validar_nodo
 from tabulate import tabulate
 import sympy as sp
+from sympy.parsing.sympy_parser import parse_expr
 
 
 def newton_raphson(funcion: str, valor_inicial_input: Any, tolerancia: float = 0.0001, max_iteraciones: int = 100):
@@ -28,12 +29,17 @@ def newton_raphson(funcion: str, valor_inicial_input: Any, tolerancia: float = 0
     # Preparar SymPy para derivada simbólica y funciones numéricas rápidas
     x_sym = sp.symbols('x')
     try:
-        sympy_expr = sp.sympify(expresion_transformada)
+        # permitir que el usuario use 'e', 'pi' y 'ln' en la entrada (ej: e^x, ln(x))
+        local_dict = {'e': sp.E, 'pi': sp.pi, 'ln': sp.log}
+        # parse_expr permite pasar local_dict de forma segura
+        sympy_expr = parse_expr(expresion_transformada, local_dict=local_dict)
         sympy_deriv = sp.diff(sympy_expr, x_sym)
-        f_num = sp.lambdify(x_sym, sympy_expr, "math")
-        fprime_num = sp.lambdify(x_sym, sympy_deriv, "math")
-    except Exception:
-        raise ValueError("No se pudo procesar la expresión con SymPy. Revise la sintaxis de la función.")
+        # Usar módulos compatibles con funciones matemáticas; math está bien para escala escalar
+        f_num = sp.lambdify(x_sym, sympy_expr, modules=["math"])
+        fprime_num = sp.lambdify(x_sym, sympy_deriv, modules=["math"])
+    except Exception as e:
+        # devolver detalle del error para facilitar el debug en el frontend
+        raise ValueError("No se pudo procesar la expresión con SymPy. Revise la sintaxis de la función. Detalle: " + str(e))
 
     # Cabecera solicitada: Iteración | xi | f(xi) | f'(xi) | xi+1
     tabla_pasos = [["Iteración", "xi", "f(xi)", "f'(xi)", "xi+1"]]
