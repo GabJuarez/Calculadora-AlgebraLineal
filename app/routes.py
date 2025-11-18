@@ -356,3 +356,58 @@ def newton_preview():
         return jsonify({'plot_data': plot_data})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+@routes_bp.route('/metodo_tangente', methods=['GET', 'POST'])
+def metodo_tangente_view():
+    resultado = None
+    error = None
+    pasos = None
+    plot_data = None
+    funcion = ''
+    limite_inferior = ''
+    limite_superior = ''
+    if request.method == 'POST':
+        try:
+            funcion = request.form.get('funcion', '').strip()
+            limite_inferior = request.form.get('limite_inferior', '').strip()
+            limite_superior = request.form.get('limite_superior', '').strip()
+            preview_image_b64 = request.form.get('preview_image', '')
+
+            if preview_image_b64:
+                plot_data = preview_image_b64
+                if not limite_inferior or not limite_superior:
+                    try:
+                        li, ls = generar_grafico_por_defecto(funcion)
+                        limite_inferior = li
+                        limite_superior = ls
+                    except Exception:
+                        limite_inferior = '-1'
+                        limite_superior = '1'
+            else:
+                try:
+                    plot_data = generate_preview_plot_for_function(funcion, limite_inferior, limite_superior, n_points=401)
+                except Exception:
+                    plot_data = None
+
+            from app.logic.metodo_tangente import metodo_tangente as _metodo_tangente
+            raiz, tabla, iteraciones, f_en_raiz = _metodo_tangente(funcion, limite_inferior, limite_superior)
+            resultado = {'raiz': raiz, 'tabla': tabla, 'iteraciones': iteraciones, 'f_en_raiz': f_en_raiz}
+        except Exception as e:
+            error = str(e)
+    return render_template('metodo_tangente.html', resultado=resultado, error=error, pasos=pasos,
+                           funcion=funcion, limite_inferior=limite_inferior, limite_superior=limite_superior, plot_data=plot_data)
+
+
+@routes_bp.route('/metodo_tangente/preview', methods=['POST'])
+def metodo_tangente_preview():
+    try:
+        funcion = request.form.get('funcion', '').strip()
+        limite_inferior = request.form.get('limite_inferior', '').strip()
+        limite_superior = request.form.get('limite_superior', '').strip()
+        if not funcion:
+            return jsonify({'error': 'Función vacía'}), 400
+        plot_data = generate_preview_plot_for_function(funcion, limite_inferior, limite_superior, n_points=800)
+        return jsonify({'plot_data': plot_data})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
