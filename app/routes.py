@@ -132,6 +132,10 @@ def informacion_view():
 def sistemas_view():
     return render_template('sistemas.html')
 
+@routes_bp.route('/metodos_numericos')
+def metodos_numericos():
+    return render_template('metodos_numericos.html')
+
 @routes_bp.route('/independencia_lineal', methods=['GET', 'POST'])
 def independencia_lineal():
     resultado = None

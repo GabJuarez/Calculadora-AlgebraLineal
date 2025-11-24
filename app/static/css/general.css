@@ -91,14 +91,16 @@ label { color: #F4F4F6; margin: 0 10px; font-size: 1.05em; font-weight: 600; }
 }
 .dashboard-container {
     display: flex;
-    min-height: 80vh;
+    /* permitir que el contenedor crezca según su contenido (evitar altura fija que provoque overflow al hacer zoom) */
+    min-height: 60vh;
     background: none;
     box-shadow: 0 4px 32px #23294644;
     border-radius: 18px;
     margin: 40px auto;
     max-width: 1100px;
-    height: 80vh; /* Fuerza el mismo alto para ambos paneles */
+    height: auto; /* permitir que el contenido imponga la altura */
 }
+
 .panel-lateral {
     width: 200px; /* Reducido para dar más espacio al panel principal */
     background: linear-gradient(120deg, #393e6c 0%, #232946 100%);
@@ -109,8 +111,8 @@ label { color: #F4F4F6; margin: 0 10px; font-size: 1.05em; font-weight: 600; }
     flex-direction: column;
     align-items: center;
     min-height: 100%;
-    height: 100%; /* Igual al contenedor */
 }
+
 .panel-lista {
     list-style: none;
     padding: 24px 0;
@@ -159,8 +161,9 @@ label { color: #F4F4F6; margin: 0 10px; font-size: 1.05em; font-weight: 600; }
     max-width: 900px;
     margin: 0 auto;
     box-sizing: border-box;
-    min-height: 100vh; /* Asegura que el panel tenga al menos el alto de la ventana */
-    height: auto; /* Permite que crezca según el contenido */
+    /* permitir que el panel crezca según el contenido y que el navegador gestione el scroll */
+    min-height: auto;
+    height: auto;
 }
 .titulo-principal {
     text-align: center;

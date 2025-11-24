@@ -8,15 +8,12 @@
         <nav>
             <ul class="panel-lista">
                 <li><a href="{{ url_for('routes_bp.sistemas_view') }}">Sistemas de ecuaciones lineales</a></li>
+                <li><a href="{{ url_for('routes_bp.metodos_numericos') }}">Métodos numéricos</a></li>
                 <li><a href="{{ url_for('routes_bp.determinante_view') }}">Determinante de una matriz</a></li>
                 <li><a href="{{ url_for('routes_bp.matriz_inversa_view') }}">Matriz inversa</a></li>
                 <li><a href="{{ url_for('routes_bp.traspuesta_view') }}">Matriz traspuesta</a></li>
                 <li><a href="{{ url_for('routes_bp.operaciones_matrices_view') }}">Operaciones con matrices</a></li>
                 <li><a href="{{ url_for('routes_bp.independencia_lineal') }}">Independencia lineal de vectores</a></li>
-                <li><a href="{{ url_for('routes_bp.biseccion_view') }}">Método de bisección</a> </li>
-                <li><a href="{{ url_for('routes_bp.falsa_posicion_view') }}">Método falsa posición</a></li>
-                <li><a href="{{ url_for('routes_bp.newton_view') }}">Método Newton-Raphson</a></li>
-                <li><a href="{{ url_for('routes_bp.metodo_tangente_view') }}">Método de la tangente</a></li>
                 <li><a href="{{ url_for('routes_bp.informacion_view') }}">Información</a></li>
             </ul>
         </nav>
@@ -27,6 +24,10 @@
         <p>Usa el panel lateral para navegar entre los distintos métodos para resolver
             ecuaciones lineales y herramientas que permiter realizar distintas operaciones
             con matrices y vectores.</p>
+
+        <div class="image-panel">
+            <img class="image-panel__img" src="{{ url_for('static', filename='assets/menu_principal.png') }}" alt="Imagen menú principal">
+        </div>
     </main>
 </div>
 {% endblock %}

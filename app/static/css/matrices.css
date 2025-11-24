@@ -508,3 +508,52 @@
     .resumen-status { font-size: 1.02rem; padding: 8px 12px; }
     .resumen-explanation, .resumen-vectors { max-width: 96%; }
 }
+
+/* Estilos para el formulario de matrices cuadradas (panel centrado) */
+.form_matriz_cuadrada {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 1.2rem auto 1rem auto;
+    padding: 1.2rem 1.4rem;
+    background: linear-gradient(180deg, #232946 0%, #1d2236 100%);
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(15,22,40,0.45);
+    border: 1px solid rgba(167,227,194,0.06);
+    width: fit-content;
+    max-width: 95vw;
+}
+
+.form_matriz_cuadrada label {
+    color: #A7E3C2;
+    font-weight: 700;
+    margin: 6px 8px 6px 0;
+    text-align: center;
+}
+
+.form_matriz_cuadrada input[type="number"] {
+    width: 96px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(167,227,194,0.08);
+    background: linear-gradient(180deg, #2b374f 0%, #232946 100%);
+    color: #A7E3C2;
+    text-align: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    margin: 6px 6px;
+}
+
+/* Asegurar que el panel #matriz dentro del formulario cuadrado se adapte y quede centrado */
+.form_matriz_cuadrada #matriz {
+    margin: 12px auto 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(180deg, #232946 0%, #1d2236 100%);
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 22px rgba(8,12,26,0.36);
+    border: 1px solid rgba(167,227,194,0.04);
+    width: fit-content;
+}

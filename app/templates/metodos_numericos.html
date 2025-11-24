@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Raices de polinomios{% endblock %}
+
+{% block body %}
+<div class="dashboard-container">
+    <aside class="panel-lateral">
+        <nav>
+            <ul class="panel-lista">
+                <li><a href="{{ url_for('routes_bp.falsa_posicion_view') }}">Método falsa posición</a></li>
+                <li><a href="{{ url_for('routes_bp.newton_view') }}">Método Newton-Raphson</a></li>
+                <li><a href="{{ url_for('routes_bp.biseccion_view') }}">Método de bisección</a> </li>
+                <li><a href="{{ url_for('routes_bp.metodo_tangente_view') }}">Método de la tangente</a></li>
+                <li><a href="{{ url_for('routes_bp.index') }}"> Menú principal</a> </li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="panel-principal">
+        <h1 class="titulo-principal">Elige el método para aproximar la raiz de un polinomio</h1>
+        <hr>
+        <p>Selecciona uno de los métodos numericos para aproximar raices de polinomios. Cada uno te mostrará
+            un grafico, la raiz aproximada y la tabla de iteraciones con la tolerancia utilizada.</p>
+         <div class="image-panel">
+            <img class="image-panel__img" src="{{ url_for('static', filename='assets/metodos_numericos.png') }}" alt="Una imagen alusiva a la calculadora">
+        </div>
+    </main>
+</div>
+{% endblock %}

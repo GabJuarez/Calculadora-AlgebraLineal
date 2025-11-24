@@ -11,13 +11,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pasos.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/matrices.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/biseccion.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/imagenes.css') }}">
     {% block head %}{% endblock %}
 </head>
 <body>
 
 {% macro format_paso(texto) %}
     {% if texto %}
-        {# If texto already contains HTML tags, render it raw #}
         {% if '<' in texto and '>' in texto %}
             {{ texto|safe }}
         {% else %}
