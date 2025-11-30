@@ -183,13 +183,33 @@ def subindice(num):
     return ''.join(SUBS.get(d, d) for d in str(num))
 
 def fraccion_str(frac):
-    """Convierte un Fraction en string, mostrando fracción si es necesario."""
+    """Convierte un Fraction o número en string, mostrando fracción si es necesario y
+    asegurando que la fracción esté reducida.
+    """
+    from fractions import Fraction
+    # Si ya es Fraction, usarlo directamente (ya está reducido)
     if isinstance(frac, Fraction):
         if frac.denominator == 1:
             return str(frac.numerator)
         else:
             return f"{frac.numerator}/{frac.denominator}"
-    return str(frac)
+    # enteros
+    if isinstance(frac, int):
+        return str(frac)
+    # floats -> convertir a Fraction aproximada y limitar denominador
+    if isinstance(frac, float):
+        f = Fraction(frac).limit_denominator(10**6)
+        if f.denominator == 1:
+            return str(f.numerator)
+        return f"{f.numerator}/{f.denominator}"
+    # intentar convertir otros tipos numéricos (por ejemplo Decimal o cadenas que representan fracciones)
+    try:
+        f = Fraction(frac)
+        if f.denominator == 1:
+            return str(f.numerator)
+        return f"{f.numerator}/{f.denominator}"
+    except Exception:
+        return str(frac)
 
 def matriz_a_str(matriz):
     """
@@ -378,6 +398,7 @@ def parse_input_number(value) -> float:
         raise ValueError(f"No se pudo convertir '{value}' a número: {e}")
 
 if __name__ == '__main__':
-    matriz = [[2, 1, -1],
-             [-3, -1, 2],
-             [-2, 1, 2]]
+    matriz = [[20/10, 0, 0],
+              [0, 15/5, 0],
+              [0, 0, 25/5]]
+

@@ -20,37 +20,98 @@ function generarInputsMatriz(id, filas, columnas) {
 }
 
 function inicializarMatrices() {
-    generarInputsMatriz('matriz_a',
-        document.getElementById('filas_a').value,
-        document.getElementById('columnas_a').value);
-    generarInputsMatriz('matriz_b',
-        document.getElementById('filas_b').value,
-        document.getElementById('columnas_b').value);
+    const op = document.getElementById('operacion');
+    const filasA = parseInt(document.getElementById('filas_a').value, 10) || 0;
+    const colsA = parseInt(document.getElementById('columnas_a').value, 10) || 0;
+    const filasB = parseInt(document.getElementById('filas_b').value, 10) || 0;
+    const colsB = parseInt(document.getElementById('columnas_b').value, 10) || 0;
+
+    generarInputsMatriz('matriz_a', filasA, colsA);
+
+    // si la operación es multiplicar, sincronizamos filas de B con columnas de A
+    if (op && (op.value === 'Multiplicación')) {
+        document.getElementById('filas_b').value = colsA;
+        generarInputsMatriz('matriz_b', colsA, colsB);
+    } else {
+        generarInputsMatriz('matriz_b', filasB, colsB);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     inicializarMatrices();
+
     document.getElementById('filas_a').addEventListener('input', function() {
-        generarInputsMatriz('matriz_a', this.value, document.getElementById('columnas_a').value);
+        const filas = parseInt(this.value, 10) || 0;
+        const columnas = parseInt(document.getElementById('columnas_a').value, 10) || 0;
+        generarInputsMatriz('matriz_a', filas, columnas);
     });
+
     document.getElementById('columnas_a').addEventListener('input', function() {
-        generarInputsMatriz('matriz_a', document.getElementById('filas_a').value, this.value);
-        generarInputsMatriz('matriz_b', this.value, document.getElementById('columnas_b').value);
+        const columnasA = parseInt(this.value, 10) || 0;
+        const filasA = parseInt(document.getElementById('filas_a').value, 10) || 0;
+        const filasBInput = document.getElementById('filas_b');
+        const colsB = parseInt(document.getElementById('columnas_b').value, 10) || 0;
+
+        // siempre regenerar A
+        generarInputsMatriz('matriz_a', filasA, columnasA);
+
+        // si la operación es multiplicar, sincronizar filas de B con columnas de A
+        const op = document.getElementById('operacion');
+        if (op && (op.value === 'Multiplicación' || op.value === 'multiplicacion')) {
+            filasBInput.value = columnasA;
+            generarInputsMatriz('matriz_b', columnasA, colsB);
+        } else {
+            // en otras operaciones, B mantiene su tamaño independiente
+            const filasB = parseInt(filasBInput.value, 10) || 0;
+            generarInputsMatriz('matriz_b', filasB, colsB);
+        }
     });
+
     document.getElementById('filas_b').addEventListener('input', function() {
-        generarInputsMatriz('matriz_b', this.value, document.getElementById('columnas_b').value);        generarInputsMatriz('matriz_a', document.getElementById('filas_a', this.value));
-        generarInputsMatriz('matriz_a', document.getElementById('filas_a').value, this.value);
+        const filasB = parseInt(this.value, 10) || 0;
+        const colsB = parseInt(document.getElementById('columnas_b').value, 10) || 0;
+
+        // siempre regenerar B
+        generarInputsMatriz('matriz_b', filasB, colsB);
+
+        // si la operación es multiplicar, sincronizar columnas de A con filas de B
+        const op = document.getElementById('operacion');
+        if (op && (op.value === 'multiplicar' || op.value === 'multiplicacion')) {
+            const columnasAInput = document.getElementById('columnas_a');
+            columnasAInput.value = filasB;
+            const filasA = parseInt(document.getElementById('filas_a').value, 10) || 0;
+            generarInputsMatriz('matriz_a', filasA, filasB);
+        }
     });
+
     document.getElementById('columnas_b').addEventListener('input', function() {
-        generarInputsMatriz('matriz_b', document.getElementById('filas_b').value, this.value);
+        const filasB = parseInt(document.getElementById('filas_b').value, 10) || 0;
+        const columnasB = parseInt(this.value, 10) || 0;
+        generarInputsMatriz('matriz_b', filasB, columnasB);
     });
+
     document.getElementById('operacion').addEventListener('change', function() {
+        // Al cambiar la operación, si es multiplicar sincronizamos B.filas = A.columnas
+        const op = this.value;
+        const columnasA = parseInt(document.getElementById('columnas_a').value, 10) || 0;
+        const colsB = parseInt(document.getElementById('columnas_b').value, 10) || 0;
+        if (op === 'Multiplicación' || op === 'multiplicacion') {
+            document.getElementById('filas_b').value = columnasA;
+            generarInputsMatriz('matriz_b', columnasA, colsB);
+        } else {
+            // si se cambia a otra operación, no forzamos sincronía; solo regeneramos con valores actuales
+            const filasB = parseInt(document.getElementById('filas_b').value, 10) || 0;
+            const filasA = parseInt(document.getElementById('filas_a').value, 10) || 0;
+            const columnasA = parseInt(document.getElementById('columnas_a').value, 10) || 0;
+            generarInputsMatriz('matriz_a', filasA, columnasA);
+            generarInputsMatriz('matriz_b', filasB, colsB);
+        }
     });
 });
 
 function limpiarMatrices() {
-    generarInputsMatriz('matriz_a', document.getElementById('filas_a').value, document.getElementById('columnas_a').value);
-    generarInputsMatriz('matriz_b', document.getElementById('filas_b').value, document.getElementById('columnas_b').value);
+    generarInputsMatriz('matriz_a', parseInt(document.getElementById('filas_a').value, 10) || 0, parseInt(document.getElementById('columnas_a').value, 10) || 0);
+    generarInputsMatriz('matriz_b', parseInt(document.getElementById('filas_b').value, 10) || 0, parseInt(document.getElementById('columnas_b').value, 10) || 0);
     document.getElementById('escalar_a').value = '';
     document.getElementById('escalar_b').value = '';
 }
