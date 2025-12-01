@@ -185,16 +185,48 @@
     white-space: normal; /* permitir wrap si es muy largo */
 }
 
-/* Resaltar etiquetas dentro del texto si vienen en mayúsculas o entre corchetes */
-.paso-prefix, .matriz-label-final, .matriz-label {
-    text-transform: none;
+/* Recuadro destacado para el determinante mostrado antes de los pasos */
+.determinante-panel {
+    width: 86%;
+    margin: 18px auto 8px auto;
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(12,20,34,0.92) 0%, rgba(24,30,52,0.95) 100%);
+    border: 1px solid rgba(167,227,194,0.07);
+    box-shadow: 0 10px 30px rgba(6,12,26,0.36);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* asegurar responsividad en pantallas pequeñas */
+.resultado-determinante-big {
+    margin-top: 8px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, rgba(39,65,86,0.14), rgba(45,106,136,0.06));
+    color: #CFF7E7; /* color claro para contraste */
+    font-size: 1.45em;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-align: center;
+    min-width: 220px;
+}
+
+.determinante-subtext {
+    margin-top: 8px;
+    color: #E6FFF2;
+    opacity: 0.9;
+    font-size: 0.95em;
+    text-align: center;
+    max-width: 90%;
+}
+
 @media (max-width: 720px) {
     .pasos li { width: 96%; padding: 12px; }
     .paso-rest { max-width: 100%; padding: 6px 10px; }
     .paso-prefix { padding: 5px 8px; }
+    .determinante-panel { width: 96%; padding: 10px; }
+    .resultado-determinante-big { font-size: 1.18em; padding: 10px 12px; min-width: 0; }
 }
 
 /* Cramer-specific pills centering */

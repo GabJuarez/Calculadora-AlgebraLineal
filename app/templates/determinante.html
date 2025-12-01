@@ -13,9 +13,10 @@
     <div class="error">{{ error }}</div>
 {% endif %}
 
+{# Resultado: mostrar matriz y un recuadro destacado con el determinante/explicación #}
 {% if resultado %}
     <div class="panel-resultado">
-        <h3 class="titulo-resultado">Matriz y determinante</h3>
+        <h3 class="titulo-resultado">Matriz</h3>
         <table class="matriz_resultado">
             <tbody>
             {% for fila in resultado.matriz %}
@@ -27,8 +28,17 @@
             {% endfor %}
             </tbody>
         </table>
-        <h3 class="titulo-resultado">Determinante</h3>
-        <div class="resultado-determinante">{{ resultado.det }}</div>
+
+        {# Recuadro destacado del determinante: preferir mostrar el valor numérico grande y la explicación como subtítulo #}
+        <div class="determinante-panel">
+            <h3 class="titulo-resultado">Determinante</h3>
+            <div class="resultado-determinante-big">
+                {{ resultado.det }}
+            </div>
+            {% if det_explanation %}
+                <div class="determinante-subtext">{{ det_explanation|safe }}</div>
+            {% endif %}
+        </div>
     </div>
 {% endif %}
 
@@ -38,7 +48,8 @@
         {% for paso in pasos %}
         <li>
             {% if paso is string %}
-                {% if 'Matriz' in paso or '[' in paso %}
+                {# Sólo parsear cadenas como matrices si contienen corchetes (formato textual de matriz) #}
+                {% if '[' in paso %}
                     {% if ':' in paso %}
                         {% set label = paso.split(':',1)[0] %}
                         {% set matriz_text = paso.split(':',1)[1] %}
