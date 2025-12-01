@@ -3,6 +3,8 @@ from app import (gauss_jordan, resolver_cramer, gauss_jordan_pasos,
                  eliminacion_gaussiana, matriz_desde_formulario, traspuesta,
                  matriz_triangular,calcular_determinante, biseccion, operar_matrices,
                  falsa_posicion, generate_preview_plot_for_function, generar_grafico_por_defecto)
+from app.logic.utils import fraccion_str
+from app.logic.rref import rref
 import re
 
 routes_bp = Blueprint('routes_bp', __name__)
@@ -107,22 +109,68 @@ def traspuesta_view():
 
 @routes_bp.route('/determinante', methods=['GET', 'POST'])
 def determinante_view():
-    triangular = None
-    pasos_triangular = None
-    determinante = None
-    pasos_determinante = None
+    resultado = None
+    pasos = None
+    det_explanation = None
     error = None
     if request.method == 'POST':
         try:
             matriz = matriz_desde_formulario(request)
             validar_matriz(matriz)
-            triangular, pasos_triangular = matriz_triangular(matriz)
-            determinante, pasos_determinante = calcular_determinante(matriz)
+
+            # Llamar solo a calcular_determinante para evitar ejecutar eliminación dos veces
+            determinante, pasos_all = calcular_determinante(matriz)
+
+            # Extraer la matriz triangular desde los pasos de eliminación (si está disponible)
+            triangular = None
+            if pasos_all:
+                # buscar paso que contenga la matriz triangular (etiqueta o último paso con matriz)
+                for paso in pasos_all:
+                    if isinstance(paso, (list, tuple)) and paso[1]:
+                        texto = paso[0] if isinstance(paso[0], str) else ''
+                        if 'triangular' in texto.lower() or 'matriz triangular' in texto.lower():
+                            triangular = paso[1]
+                            break
+                # fallback: usar la última matriz que aparezca en los pasos
+                if triangular is None:
+                    for paso in reversed(pasos_all):
+                        if isinstance(paso, (list, tuple)) and paso[1]:
+                            triangular = paso[1]
+                            break
+
+            resultado = {
+                'matriz': triangular,
+                'det': fraccion_str(determinante) if determinante is not None else None
+            }
+
+            # Solo quitar el paso que indica explícitamente la "Matriz triangular" para evitar duplicado visual
+            pasos = [p for p in pasos_all if not (isinstance(p, (list, tuple)) and isinstance(p[0], str) and 'triangular' in p[0].lower())]
+
+            # explicación final: extraerla siempre desde la lista original `pasos_all` (contiene el paso determinante)
+            if pasos_all:
+                last = pasos_all[-1]
+                det_explanation = last[0] if isinstance(last, (list, tuple)) else str(last)
+
+            # Asegurar que resultado['det'] contenga el valor numérico del determinante
+            # Si por alguna razón no está (None o no parece numérico), intentar extraerlo de det_explanation
+            import re
+            det_val = resultado.get('det')
+            if not det_val or not re.match(r'^-?\d+$|^-?\d+/\d+$', str(det_val).strip()):
+                if det_explanation:
+                    # buscar patrón '= <valor>' al final de la explicación
+                    m = re.search(r'=\s*([^=]+)$', det_explanation)
+                    if m:
+                        posible = m.group(1).strip()
+                        # limpiar paréntesis o texto residual
+                        posible = posible.split('(')[0].strip()
+                        resultado['det'] = posible
+                    else:
+                        # fallback: dejar det tal cual (ya se intentó formatear antes)
+                        resultado['det'] = det_val
+
         except Exception as e:
             error = str(e)
-    return render_template('determinante.html', triangular=triangular,
-                           pasos_triangular=pasos_triangular, determinante=determinante,
-                           pasos_determinante=pasos_determinante, error=error)
+    return render_template('determinante.html', resultado=resultado, pasos=pasos, det_explanation=det_explanation, error=error)
 
 @routes_bp.route('/informacion')
 def informacion_view():
@@ -415,3 +463,18 @@ def metodo_tangente_preview():
         return jsonify({'plot_data': plot_data})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@routes_bp.route('/rref', methods=['GET', 'POST'])
+def rref_view():
+    resultado = None
+    pasos = None
+    error = None
+    if request.method == 'POST':
+        try:
+            matriz = matriz_desde_formulario(request)
+            validar_matriz(matriz)
+            matriz_reducida, pasos = rref(matriz)
+            resultado = {'matriz': matriz_reducida}
+        except Exception as e:
+            error = str(e)
+    return render_template('rref.html', resultado=resultado, pasos=pasos, error=error)
