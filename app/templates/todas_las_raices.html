@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Todas las raíces{% endblock %}
+
+{% block body %}
+<h1 class="titulo_matriz">Todas las raíces</h1>
+<form method="post" action="{{ url_for('routes_bp.todas_las_raices_view') }}" class="formulario_biseccion">
+    <div class="formulario_biseccion_campos" style="align-items:center; gap:18px;">
+        <div class="campo_biseccion" style="flex:1; min-width:240px;">
+            <label for="funcion">f(x):</label>
+            <input type="text" id="funcion" name="funcion" value="{{ funcion|default('') }}" required class="input_biseccion">
+        </div>
+
+        <!-- Toggle estilizado -->
+        <div class="campo_biseccion toggle-wrapper">
+            <label for="solo_reales" class="toggle-label">Mostrar sólo reales</label>
+            <label class="switch">
+              <input type="checkbox" id="solo_reales" name="solo_reales" {% if solo_reales %}checked{% endif %}>
+              <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="botones_biseccion">
+        <button type="submit" class="btn btn-primary boton_calcular">Calcular</button>
+        <button type="button" class="boton_volver" onclick="window.location.href='/'">Página Principal</button>
+    </div>
+</form>
+
+{% if resultado %}
+  <div class="panel-resultado">
+    <h3 class="titulo-resultado">Resultado</h3>
+
+    <div class="result-box">
+      <div class="result-header">
+        <div>
+          <p class="muted">Raíz destacada</p>
+          {% if resultado.raiz_destacada %}
+            <div class="raiz-destacada">{{ resultado.raiz_destacada }}</div>
+          {% else %}
+            <div class="raiz-destacada">No hay raíces para mostrar</div>
+          {% endif %}
+        </div>
+        <div class="result-meta">
+          <div><strong>Grado:</strong> {{ resultado.grado }}</div>
+          <div><strong>Reales:</strong> {{ resultado.reales }} &nbsp; <strong>Complejas:</strong> {{ resultado.complejas }}</div>
+        </div>
+      </div>
+
+      <h4 style="margin-top:12px; margin-bottom:8px;">Lista de raíces</h4>
+      <div class="table-wrap">
+        <table class="tabla-raices">
+          <thead>
+            <tr>
+              <th>Exacta</th>
+              <th>Aproximación</th>
+              <th>Multiplicidad</th>
+              <th>Tipo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in resultado.raices %}
+              <tr>
+                <td class="mono">{{ r.exact }}</td>
+                <td>{{ r.approx }}</td>
+                <td style="text-align:center">{{ r.multiplicity }}</td>
+                <td>{% if r.is_real %}<span class="pill pill-real">Real</span>{% else %}<span class="pill pill-complex">Compleja</span>{% endif %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+{% endif %}
+
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<style>
+/* Resultado box */
+.result-box{
+  border-radius:10px;
+  padding:14px;
+  background: linear-gradient(180deg,#071028,#091022);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+  color: #e6eef8;
+}
+.result-header{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.result-meta{ text-align:right; color:#cbd5e1; font-size:0.95rem }
+.muted{ color:#93c5fd; margin:0 0 6px 0; font-weight:600 }
+
+/* Raiz destacada */
+.raiz-destacada{ font-size:1.25rem; padding:8px 12px; border-radius:8px; background:rgba(255,255,255,0.03); display:inline-block; color:#dbeafe }
+
+/* Tabla */
+.table-wrap{ overflow:auto; margin-top:6px }
+.tabla-raices{ width:100%; border-collapse:collapse; min-width:560px }
+.tabla-raices thead th{ background: linear-gradient(90deg,#0b1220,#12203a); color:#e6eef8; padding:10px; text-align:left; position:sticky; top:0 }
+.tabla-raices th, .tabla-raices td{ padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.04) }
+.tabla-raices tbody tr:nth-child(odd){ background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)) }
+.tabla-raices tbody tr:hover{ background: rgba(59,130,246,0.06) }
+.tabla-raices .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace; color:#bfdbfe }
+
+/* Pills */
+.pill{ display:inline-block; padding:6px 8px; border-radius:999px; font-size:0.85rem; color:#081229 }
+.pill-real{ background: #bbf7d0 }
+.pill-complex{ background: #ffd6a5 }
+
+/* Toggle switch */
+.switch{ position:relative; display:inline-block; width:46px; height:26px; vertical-align:middle }
+.switch input{ opacity:0; width:0; height:0 }
+.slider{ position:absolute; cursor:pointer; inset:0; background:#2b3448; border-radius:999px; transition: .2s }
+.slider:before{ content:""; position:absolute; height:20px; width:20px; left:3px; top:3px; background:white; border-radius:50%; box-shadow:0 2px 6px rgba(2,6,23,0.6); transition:.2s }
+.switch input:checked + .slider{ background: linear-gradient(90deg,#06b6d4,#3b82f6) }
+.switch input:checked + .slider:before{ transform: translateX(20px) }
+.toggle-wrapper{ display:flex; align-items:center; gap:10px }
+.toggle-label{ color:#cbd5e1; font-weight:600 }
+
+/* Responsive tweaks */
+@media (max-width:700px){
+  .result-header{ flex-direction:column; align-items:flex-start }
+  .result-meta{ text-align:left }
+}
+</style>
+
+{% endblock %}
