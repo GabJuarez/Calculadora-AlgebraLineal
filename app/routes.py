@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, request, jsonify
 from app import (gauss_jordan, resolver_cramer, gauss_jordan_pasos,
                  eliminacion_gaussiana, matriz_desde_formulario, traspuesta,
-                 matriz_triangular,calcular_determinante, biseccion, operar_matrices,
+                 calcular_determinante, biseccion, operar_matrices,
                  falsa_posicion, generate_preview_plot_for_function, generar_grafico_por_defecto)
 from app.logic.utils import fraccion_str
 from app.logic.rref import rref
+from app.logic.todas_las_raices import todas_las_raices
 import re
 
 routes_bp = Blueprint('routes_bp', __name__)
@@ -478,3 +479,36 @@ def rref_view():
         except Exception as e:
             error = str(e)
     return render_template('rref.html', resultado=resultado, pasos=pasos, error=error)
+
+@routes_bp.route('/todas_las_raices', methods=['GET', 'POST'])
+def todas_las_raices_view():
+    resultado = None
+    pasos = []
+    error = None
+    funcion = ''
+    solo_reales = False
+    if request.method == 'POST':
+        try:
+            funcion = request.form.get('funcion', '').strip()
+            solo_reales = bool(request.form.get('solo_reales'))
+            if not funcion:
+                raise ValueError('Función vacía')
+
+            raices, pasos_calc, fact_str, grado = todas_las_raices(funcion, solo_reales)
+
+            # preparar resumen para la plantilla
+            reales = sum(1 for r in raices if r.get('is_real'))
+            complejas = len(raices) - reales
+            raiz_destacada = raices[0]['approx'] if raices else None
+
+            resultado = {
+                'raices': raices,
+                'raiz_destacada': raiz_destacada,
+                'grado': grado,
+                'reales': reales,
+                'complejas': complejas
+            }
+            pasos = pasos_calc
+        except Exception as e:
+            error = str(e)
+    return render_template('todas_las_raices.html', resultado=resultado, pasos=pasos, error=error, funcion=funcion, solo_reales=solo_reales)
